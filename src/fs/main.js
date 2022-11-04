@@ -1,6 +1,5 @@
-import htm from './htm.min.js';
+
 import {Component, h, render} from './preact.min.js';
-const html = htm.bind(h);
 
 class App extends Component {
   state = {connected: false, ssid: '', pass: '', spin: false, frames: []};
@@ -38,33 +37,31 @@ class App extends Component {
           .catch(err => alert('Error: ' + err))
           .then(ev => this.setState({spin: false}));
     };
-    return html`
-		<div class="container">
-			<h1>${props.title}</h1>
-			<div style="text-align: right; font-size:small;">Websocket connected:
-				<b> ${state.connected ? 'yes' : 'no'}</b></div>
+    return h(
+		'div', {class:"container"},
+			h('h1',props.title),
+			h('div', {style:'text-align: right; font-size:small;'},"Websocket connected:",
+				h('b',state.connected ? 'yes' : 'no'),
 
-      <div style="display: flex; flex-direction: column; margin: 2em 0;">
-				<div style="display: flex; margin: 0.2em 0;">
-					<label style="width: 33%;">WiFi network:</label>
-					<input type="text"
-					onInput=${onssid} style="flex:1;" />
-				</div>
-				<div style="display: flex; margin: 0.2em 0;">
-					<label style="width: 33%;">WiFi password:</label>
-					<input type="text"
-					onInput=${onpass} style="flex:1;" />
-				</div>
+      h('div', {style:'display: flex; flex-direction: column; margin: 2em 0;'},
+			h('div', {style:'display: flex; margin: 0.2em 0;'},
+					h('label',{style:'width: 33%;'},"WiFi network:"),
+					h('input', {type:'text',onInput:onssid,style:'flex:1;'}))
+				h(div style="display: flex; margin: 0.2em 0;">
+					(label style="width: 33%;">WiFi password:)
+					(input type="text"
+					onInput=${onpass} style="flex:1;" )
+				)
 				<button class="btn" style="margin: 0.3em 0; width: 100%;
 				background: ${state.ssid ? '#2079b0' : '#ccc'}"
 				onclick=${onclick} disabled=${!state.ssid}>
-		<span class=${state.spin ? 'spin' : ''} /> Save WiFi settings
+		    <span class=${state.spin ? 'spin' : ''} /> Save WiFi settings
 				</button>
-      </div>
+      )
 
 			<h4>JSON-RPC over WebSocket log:</h4>
 			<pre class="log">${state.frames.join('\n')}</pre>
-		</div>`;
+		);
   }
 }
 

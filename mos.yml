@@ -111,7 +111,7 @@ libs:
   - origin: https://github.com/mongoose-os-libs/dallas-rmt
   - origin: https://github.com/mongoose-os-libs/bme280
   - origin: https://github.com/mongoose-os-libs/wifi
-  - origin: https://github.com/mongoose-os-libs/wifi-setup-web-ui
+#  - origin: https://github.com/mongoose-os-libs/wifi-setup-web-ui
 
 # Used by the mos tool to catch mos binaries incompatible with this file format
 manifest_version: 2020-01-29

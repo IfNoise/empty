@@ -16,7 +16,7 @@ sources:
 
 # List of dirs. Files from these dirs will be copied to the device filesystem
 filesystem:
-  - fs
+  - src/fs
 
 config_schema:
   - ["mqtt.enable", true]  

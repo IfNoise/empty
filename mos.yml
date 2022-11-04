@@ -1,0 +1,117 @@
+author: mongoose-os
+description: A Mongoose OS app skeleton
+version: 1.0
+
+libs_version: latest
+modules_version: latest
+mongoose_os_version: latest
+
+# Optional. List of tags for online search.
+tags:
+  - c
+
+# List of files / directories with C sources. No slashes at the end of dir names.
+sources:
+  - src
+
+# List of dirs. Files from these dirs will be copied to the device filesystem
+filesystem:
+  - fs
+
+config_schema:
+  - ["mqtt.enable", true]  
+  - ["mqtt.server", "192.168.2.22:1883"]
+  - ["mqtt.user", "noise83"]
+  - ["mqtt.pass", "neuro83"]
+#  - ["mqtt.ssl_ca_cert", "ca.pem"]
+  - ["rpc.mqtt.enable", true]
+  - ["wifi.ap.enable",false]
+  - ["wifi.sta.enable",true]
+  - ["wifi.sta.ssid", "if_noise"]
+  - ["wifi.sta.pass", "00000006"]
+  - ["debug.stderr_topic", "debug/stderr"]
+  # - ["dash.enable",true]
+  # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
+  - ["i2c.enable", true]
+  - ["debug.level", 3]
+  #=================================================================================================
+  - ["intout", "o", {title: "Internal Output Settings", abstract: true}]
+  - ["intout.name", "s", "", {title: "Output Name"}]
+  - ["intout.pin", "i", 0, {title: "Output Pin"}]
+  - ["intout.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
+  #=================================================================================================
+  - ["reg", "o", {title: "Regulator Settings", abstract: true}]
+  - ["reg.name", "s", "", {title: "Output Name"}]
+  - ["reg.type","i",0,{title: "Regulator Dest Up-0,Down-1"}] #Heater - Up ,Cooler -Down
+  - ["reg.enable", "b", false, {title: "Enable Regulator"}]
+  - ["reg.input", "s", "", {title: "Input Object Name"}]
+  - ["reg.output", "s", "", {title: "Output Object Name"}]
+  - ["reg.setpoint", "f", 0.0, {title: "Setpoint"}]
+  - ["reg.hist", "f", 0.0, {title: "Histeresis"}]  
+  - ["reg.inter","i",0,{title: "Update interval"}]
+#====================================================================================================
+  - ["intout1","intout", {title: "Heeater Output Settings"}]
+  - ["intout1.name","Heater"]
+  - ["intout1.pin",2]
+  - ["intout1.inverted",false]
+#====================================================================================================
+  - ["intout2","intout", {title: "Fan Cooler"}]
+  - ["intout2.name","Fan"]
+  - ["intout2.pin",14]
+  - ["intout2.inverted",false]
+#====================================================================================================
+  - ["intout3","intout", {title: "Fan Cooler Speed "}]
+  - ["intout3.name","FanSpeed"]
+  - ["intout3.pin",27]
+  - ["intout3.inverted",false]
+#=====================================================================================================
+  - ["reg1", "reg",{title: "Reg 1 Settings"}]
+  - ["reg1.name", "HeaterTermostat"]
+  - ["reg1.type", 0] #Heater - Up ,Cooler -Down
+  - ["reg1.enable", true]
+  - ["reg1.input", "DTemp0"]
+  - ["reg1.output", "Heater"]
+  - ["reg1.setpoint", 24.0]
+  - ["reg1.hist", 1.0]  
+  - ["reg1.inter",1000]
+#=====================================================================================================
+  - ["reg2", "reg",{title: "Reg 2 Settings"}]
+  - ["reg2.name", "FanTermostat"]
+  - ["reg2.type", 1] #Heater - Up ,Cooler -Down
+  - ["reg2.enable", true]
+  - ["reg2.input", "DTemp1"]
+  - ["reg2.output", "Fan"]
+  - ["reg2.setpoint", 28.0]
+  - ["reg2.hist", 1.0]  
+  - ["reg2.inter",1000]
+#=====================================================================================================
+  - ["reg3", "reg",{title: "Reg 3 Settings"}]
+  - ["reg3.name", "FanSpeedTermostat"]
+  - ["reg3.type", 1] #Heater - Up ,Cooler -Down
+  - ["reg3.enable", true]
+  - ["reg3.input", "DTemp1"]
+  - ["reg3.output", "FanSpeed"]
+  - ["reg3.setpoint", 30.0]
+  - ["reg3.hist", 3.0]  
+  - ["reg3.inter",1000]
+
+
+
+
+libs:
+ # - origin: https://github.com/mongoose-os-libs/dash
+ # - origin: https://github.com/mongoose-os-libs/ca-bundle
+  - origin: https://github.com/mongoose-os-libs/http-server
+  - origin: https://github.com/mongoose-os-libs/mqtt
+  - origin: https://github.com/mongoose-os-libs/rpc-ws
+  - origin: https://github.com/mongoose-os-libs/rpc-uart
+  - origin: https://github.com/mongoose-os-libs/rpc-mqtt
+  - origin: https://github.com/mongoose-os-libs/rpc-service-config
+  - origin: https://github.com/mongoose-os-libs/rpc-service-fs
+  - origin: https://github.com/mongoose-os-libs/dallas-rmt
+  - origin: https://github.com/mongoose-os-libs/bme280
+  - origin: https://github.com/mongoose-os-libs/wifi
+  - origin: https://github.com/mongoose-os-libs/wifi-setup-web-ui
+
+# Used by the mos tool to catch mos binaries incompatible with this file format
+manifest_version: 2020-01-29

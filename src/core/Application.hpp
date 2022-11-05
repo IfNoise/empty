@@ -145,6 +145,7 @@ void Application::publishSensors()
       char buf[64];
       sprintf(buf, "%s/state/sensors/%s", mgos_sys_config_get_device_id(), sensor->getName().c_str());
       mgos_mqtt_pubf(buf, 0, false, "%0.2f", sensor->getState());
+      mgos_msleep(100);
     }
     LOG(LL_INFO, ("Sensors is published"));
   }
@@ -163,6 +164,7 @@ void Application::publishBinOuts()
       char buf[64];
       sprintf(buf, "%s/state/outputs/%s", mgos_sys_config_get_device_id(), output->getName().c_str());
       mgos_mqtt_pubf(buf, 0, false, "%s", OnOff(output->getState()));
+      mgos_msleep(100);
     }
     LOG(LL_INFO, ("Binary Outputs states is published"));
   }
@@ -176,7 +178,7 @@ void Application::publishAll()
 {
   publishSensors();
   publishBinOuts();
-  saveSensorsToFile();
+  //saveSensorsToFile();
   //printSensors();
 }
 void Application::saveSensorsToFile()
@@ -192,7 +194,7 @@ void Application::saveSensorsToFile()
     char path[32];
     sprintf(path,".sensors[%d]",i);
     json_setf(temp,strlen(temp),&output,path,"%s",sensor->getInfo().c_str());
-    strcpy(temp,buf);
+    strncpy(temp,buf,strlen(buf));
     //json_prettify(buf,1024,&output);
     
     //LOG(LL_INFO, ("%s \n \n",temp.c_str())); 

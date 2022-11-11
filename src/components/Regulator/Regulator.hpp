@@ -24,7 +24,6 @@ protected:
     Sensor *_input{nullptr};
     BinaryOutput *_output{nullptr};
     const struct mgos_config_reg *_cfg{nullptr};
-
 public:
     //Regulator(std::string name,int interval):PollingComponent(name,interval){}
     Regulator(const struct mgos_config_reg *cfg) : PollingComponent(std::string(cfg->name), cfg->inter),

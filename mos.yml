@@ -34,12 +34,24 @@ config_schema:
   # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
   - ["i2c.enable", true]
   - ["debug.level", 3]
-  #=================================================================================================
+    #=================================================================================================
+  - ["dtcomp", "o", {title: "Dallas Temperature Component Settings"}]
+  - ["dtcomp.port", "i", 13, {title: "One Wire gpio port number"}]
+  - ["dtcomp.saved", "b", false, {title: "true if sansors saved at fs"}]
+    #=================================================================================================
+  - ["r4d8comp", "o", {title: "R4D8 Modbus Relay Module Settings"}]
+  - ["r4d8comp.address", "i", 0, {title: "Output Pin"}]
+  #===================================================================================================
+  - ["r4d8out", "o", {title: "R4D8 Modbus Relay Output Settings", abstract: true}]
+  - ["r4d8out.name", "s", "", {title: "Output Name"}]
+  - ["r4d8out.port", "i", 0, {title: "Output port"}]
+  - ["r4d8out.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
+    #=================================================================================================
   - ["intout", "o", {title: "Internal Output Settings", abstract: true}]
   - ["intout.name", "s", "", {title: "Output Name"}]
   - ["intout.pin", "i", 0, {title: "Output Pin"}]
   - ["intout.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
-  #=================================================================================================
+  #==================================================================================================
   - ["reg", "o", {title: "Regulator Settings", abstract: true}]
   - ["reg.name", "s", "", {title: "Output Name"}]
   - ["reg.type","i",0,{title: "Regulator Dest Up-0,Down-1"}] #Heater - Up ,Cooler -Down
@@ -49,6 +61,30 @@ config_schema:
   - ["reg.setpoint", "f", 0.0, {title: "Setpoint"}]
   - ["reg.hist", "f", 0.0, {title: "Histeresis"}]  
   - ["reg.inter","i",0,{title: "Update interval"}]
+#====================================================================================================
+  # - ["sch", "o", {title: "Daily Scheduler Settings", abstract: true}]
+  # - ["sch.name", "s", "", {title: "Daily Scheduler Name"}]
+  # - ["sch.enable", "b", false, {title: "Enable Scheduler"}]
+  # - ["sch.output", "s", "", {title: "Output Object Name"}]
+#====================================================================================================
+  - ["irr", "o", {title: "Irrigation Scheduler Settings", abstract: true}]
+  - ["irr.name", "s", "", {title: "Daily Scheduler Name"}]
+  - ["irr.enable", "b", false, {title: "Enable Scheduler"}]
+  - ["irr.mode", "i", 0, {title: "Device Operation Mode(0-Manual OFF,1-Manual ON,2-AUTO)"}]
+  - ["irr.output", "s", "", {title: "Output Object Name"}]
+  - ["irr.start", "i", 0, {title: "Sunrise(minutes after midnight)"}]
+  - ["irr.stop", "i", 0, {title: "Sunset(minutes after midnight)"}]
+  - ["irr.num", "i", 0, {title: "Number if irrigations"}]
+  - ["irr.win", "i", 0, {title: "Irrigation window in seconds"}]
+
+#====================================================================================================
+  - ["light", "o", {title: "Light Timer Settings", abstract: true}]
+  - ["light.name", "s", "", {title: "Daily Scheduler Name"}]
+  - ["light.enable", "b", false, {title: "Enable Scheduler"}]
+  - ["light.mode", "i", 0, {title: "Device Operation Mode(0-Manual OFF,1-Manual ON,2-AUTO)"}]
+  - ["light.start", "i", 0, {title: "Sunrise (minutes of Day"}]
+  - ["light.stop", "i", 0, {title: "Sunset(minutes of Day)"}]
+  - ["light.output", "s", "", {title: "Output Object Name"}]
 #====================================================================================================
   - ["intout1","intout", {title: "Heeater Output Settings"}]
   - ["intout1.name","Heater"]
@@ -64,6 +100,16 @@ config_schema:
   - ["intout3.name","FanSpeed"]
   - ["intout3.pin",27]
   - ["intout3.inverted",false]
+#====================================================================================================
+  - ["intout4","intout", {title: "Ligth Output "}]
+  - ["intout4.name","Light"]
+  - ["intout4.pin",25]
+  - ["intout4.inverted",false]
+#====================================================================================================
+  - ["intout5","intout", {title: "Irrigation Pump Output "}]
+  - ["intout5.name","Pump"]
+  - ["intout5.pin",26]
+  - ["intout5.inverted",false]
 #=====================================================================================================
   - ["reg1", "reg",{title: "Reg 1 Settings"}]
   - ["reg1.name", "HeaterTermostat"]
@@ -94,8 +140,26 @@ config_schema:
   - ["reg3.setpoint", 30.0]
   - ["reg3.hist", 3.0]  
   - ["reg3.inter",1000]
+#====================================================================================================
+  - ["irr1", "irr", {title: "Irrigation Scheduler Settings"}]
+  - ["irr1.name", "Irrigator"]
+  - ["irr1.enable",true]
+  - ["irr1.mode", 0]
+  - ["irr1.output", "Pump"]
+  - ["irr1.start",72000]
+  - ["irr1.stop", 28800]
+  - ["irr1.num", 0]
+  - ["irr1.win", 0]
 
-
+#====================================================================================================
+  - ["light1", "light", {title: "Light Timer Settings"}]
+  - ["light1.name", "LightTimer"]
+  - ["light1.enable",true ]
+  - ["light1.mode",2]
+  - ["light1.start", 72000]
+  - ["light1.stop", 28800]
+  - ["light1.output", "Light"]
+#====================================================================================================
 
 
 libs:
@@ -111,6 +175,8 @@ libs:
   - origin: https://github.com/mongoose-os-libs/dallas-rmt
   - origin: https://github.com/mongoose-os-libs/bme280
   - origin: https://github.com/mongoose-os-libs/wifi
+  - origin: https://github.com/mongoose-os-libs/sntp
+ # - origin: https://github.com/mongoose-os-libs/modbus
 #  - origin: https://github.com/mongoose-os-libs/wifi-setup-web-ui
 
 # Used by the mos tool to catch mos binaries incompatible with this file format

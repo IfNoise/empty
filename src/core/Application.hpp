@@ -29,6 +29,7 @@ public:
   std::string printSensors();
   void saveSensorsToFile();
   void publishSensors();
+  void publishState();
   void publishBinOuts();
   void publishAll();
 };
@@ -173,11 +174,25 @@ void Application::publishBinOuts()
     LOG(LL_INFO, ("Binary Output is not published,MQTT brocker connection is lost"));
   }
 }
-
+void Application::publishState()
+{
+  if (mgos_mqtt_global_is_connected())
+  {
+      char buf[64];
+      sprintf(buf, "%s/state/", mgos_sys_config_get_device_id());
+      mgos_mqtt_pubf(buf, 0, false, "%s", this->printSensors().c_str());
+    LOG(LL_INFO, ("State is published"));
+  }
+  else
+  {
+    LOG(LL_INFO, ("State is not published,MQTT brocker connection is lost"));
+  }
+}
 void Application::publishAll()
 {
   publishSensors();
   publishBinOuts();
+  //publishState();
   //saveSensorsToFile();
   //printSensors();
 }

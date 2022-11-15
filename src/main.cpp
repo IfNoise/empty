@@ -17,7 +17,7 @@
 
 #include "main.hpp"
 #include "mgos.hpp"
-
+#include "mgos_rpc.h"
 #include "core/Application.hpp"
 #include "components/DTSensor/DTSensor.hpp"
 #include "components/BMESensor/BMESensor.hpp"
@@ -44,9 +44,32 @@ static InternalOut *FanSpeed{nullptr};
 static InternalOut *Light{nullptr};
 static InternalOut *Pump{nullptr};
 //=======================================Timers===============================================
-Timer *SensorPrintT{nullptr};
+//Timer *SensorPrintT{nullptr};
 
+//================================RPC service methods=========================================
+static void getState(struct mg_rpc_request_info *ri, void *cb_arg,struct mg_rpc_frame_info *fi, struct mg_str args)
+{
+ mg_rpc_send_responsef(ri, "%.s", App.printState().c_str());
+  (void) cb_arg;
+  (void) fi;
+}
 
+static void getSensors(struct mg_rpc_request_info *ri, void *cb_arg,struct mg_rpc_frame_info *fi, struct mg_str args)
+{
+ 
+    mg_rpc_send_responsef(ri, "%.s", App.printSensors().c_str());
+
+  (void) cb_arg;
+  (void) fi;
+}
+
+static void getOutputs(struct mg_rpc_request_info *ri, void *cb_arg,struct mg_rpc_frame_info *fi, struct mg_str args)
+{
+ mg_rpc_send_responsef(ri, "%.s", App.printOutputs().c_str());
+  (void) cb_arg;
+  (void) fi;
+}
+//============================================================================================
 void InitApp(void)
 {
   //=====================================Creating Components Objects==========================
@@ -90,8 +113,14 @@ void InitApp(void)
 
   App.InitAll();
 
+//=================================Register RPC methods======================================
+mg_rpc_add_handler(mgos_rpc_get_global(), "Get.State", NULL, getState, NULL);
+mg_rpc_add_handler(mgos_rpc_get_global(), "Get.Sensors", NULL, getSensors, NULL);
+mg_rpc_add_handler(mgos_rpc_get_global(), "Get.Outputs", NULL, getOutputs, NULL); 
+
+
   //========================================Creating Timers===================================
-  SensorPrintT = new Timer(5000, MGOS_TIMER_REPEAT,std::bind(&Application::publishAll,&App));
+  //SensorPrintT = new Timer(5000, MGOS_TIMER_REPEAT,std::bind(&Application::publishAll,&App));
 }
 //============================================================================================
 extern "C" enum mgos_app_init_result mgos_app_init(void)

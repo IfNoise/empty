@@ -34,16 +34,18 @@ protected:
     Callback _offCallback = {nullptr};
     void on();
     void off();
+    std::string _output;
     BinaryOutput *_out{nullptr};
 };
 
-Scheduler::Scheduler(std::string name,std::string output ) : PollingComponent(name, 10000)
+Scheduler::Scheduler(std::string name,std::string output ) : PollingComponent(name, 10000),_output(output)
 {
-    _out=App.getBinOutputByName(output);
+
 }
 
 Status Scheduler::Init()
 {
+     _out=App.getBinOutputByName(_output);
     return Status::OK();
 }
 

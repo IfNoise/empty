@@ -30,8 +30,8 @@ config_schema:
   - ["wifi.sta.ssid", "if_noise"]
   - ["wifi.sta.pass", "00000006"]
   - ["debug.stderr_topic", "debug/stderr"]
-  # - ["dash.enable",true]
-  # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
+ # - ["dash.enable",true]
+ # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
   - ["i2c.enable", true]
   - ["debug.level", 3]
     #=================================================================================================
@@ -163,8 +163,8 @@ config_schema:
 
 
 libs:
- # - origin: https://github.com/mongoose-os-libs/dash
- # - origin: https://github.com/mongoose-os-libs/ca-bundle
+# - origin: https://github.com/mongoose-os-libs/dash
+#  - origin: https://github.com/mongoose-os-libs/ca-bundle
   - origin: https://github.com/mongoose-os-libs/http-server
   - origin: https://github.com/mongoose-os-libs/mqtt
   - origin: https://github.com/mongoose-os-libs/rpc-ws

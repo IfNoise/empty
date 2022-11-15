@@ -27,6 +27,8 @@ public:
   Status InitAll();
   void UpdateAll();
   std::string printSensors();
+  std::string printOutputs();
+  std::string printState();
   void saveSensorsToFile();
   void publishSensors();
   void publishState();
@@ -135,7 +137,26 @@ std::string Application::printSensors()
   LOG(LL_INFO, ("Sensors %s", res.c_str()));
   return res;
 }
-
+std::string Application::printOutputs()
+{
+  std::string res;
+  int i = 0;
+  for (auto *output : this->_binOutputs)
+  {
+    if (i == 0)
+    {
+      mgos::JSONAppendStringf(&res, "{outputs: [%s", output->getInfo().c_str());
+    }
+    else
+    {
+      mgos::JSONAppendStringf(&res, ",%s", output->getInfo().c_str());
+    }
+    ++i;
+  }
+  res += "]}";
+ 
+  return res;
+}
 void Application::publishSensors()
 {
   if (mgos_mqtt_global_is_connected())
@@ -164,7 +185,7 @@ void Application::publishBinOuts()
 
       char buf[64];
       sprintf(buf, "%s/state/outputs/%s", mgos_sys_config_get_device_id(), output->getName().c_str());
-      mgos_mqtt_pubf(buf, 0, false, "%s", OnOff(output->getState()));
+      mgos_mqtt_pubf(buf, 0, false, "%B", output->getState());
       mgos_msleep(100);
     }
     LOG(LL_INFO, ("Binary Outputs states is published"));
@@ -174,19 +195,38 @@ void Application::publishBinOuts()
     LOG(LL_INFO, ("Binary Output is not published,MQTT brocker connection is lost"));
   }
 }
-void Application::publishState()
+std::string Application::printState()
 {
-  if (mgos_mqtt_global_is_connected())
+  std::string res;
+ int i = 0;
+  for (auto *sensor : this->_sensors)
   {
-      char buf[64];
-      sprintf(buf, "%s/state/", mgos_sys_config_get_device_id());
-      mgos_mqtt_pubf(buf, 0, false, "%s", this->printSensors().c_str());
-    LOG(LL_INFO, ("State is published"));
+    if (i == 0)
+    {
+      mgos::JSONAppendStringf(&res, "{sensors: [{name:%s,state:%B}", sensor->getName().c_str(),sensor->getState());
+    }
+    else
+    {
+      mgos::JSONAppendStringf(&res, ",{name:%s,state:%B}", sensor->getName().c_str(),sensor->getState());
+    }
+    ++i;
   }
-  else
+  res += "]}";
+  i=0;
+  for (auto *output : this->_binOutputs)
   {
-    LOG(LL_INFO, ("State is not published,MQTT brocker connection is lost"));
+    if (i == 0)
+    {
+      mgos::JSONAppendStringf(&res, ",{outputs: [{name:%s,state:%B}", output->getName().c_str(),output->getState());
+    }
+    else
+    {
+      mgos::JSONAppendStringf(&res, ",{name:%s,state:%B}", output->getName().c_str(),output->getState());
+    }
+    ++i;
   }
+  res += "]}";
+  return res;
 }
 void Application::publishAll()
 {

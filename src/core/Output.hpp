@@ -16,6 +16,7 @@ public:
   BinaryOutput(std::string name ,bool invert=false) : _name(name),_inverted(invert){}
   virtual Status setState(bool state) = 0; 
   virtual bool getState() = 0;
+  virtual std::string getInfo()=0;
   std::string getName(){return this->_name;}
   void setInvert(bool invert){_inverted=invert;}
 protected:

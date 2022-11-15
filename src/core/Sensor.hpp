@@ -28,6 +28,6 @@ Status Sensor::setState(float state)
 
 std::string Sensor::getInfo() const
 {
-  std::string res=mgos::JSONPrintStringf("{name:%Q,state: %.2f}",_name.c_str(),_state);
-  return res;
+  return mgos::JSONPrintStringf("{name:%Q,state: %.2f}",_name.c_str(),_state);
+  
 }

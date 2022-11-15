@@ -13,7 +13,7 @@ public:
   InternalOut(struct mgos_config_intout *cfg);
   Status setState(bool state) override; 
   bool getState() override;
-  ~InternalOut();
+  std::string getInfo() override;
 };
 
 InternalOut::InternalOut(struct mgos_config_intout *cfg)
@@ -23,8 +23,9 @@ InternalOut::InternalOut(struct mgos_config_intout *cfg)
   LOG(LL_INFO, ("OutputPin %s: pin %d", _name.c_str(),_cfg->pin));
 }
 
-InternalOut::~InternalOut()
+std::string InternalOut::getInfo()
 {
+   return mgos::JSONPrintStringf("{name:%Q,type:%s,pin: %d}",_name.c_str(),"internal",_cfg->pin);
 }
 
 Status InternalOut::setState( bool state)

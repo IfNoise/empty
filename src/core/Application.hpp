@@ -119,7 +119,7 @@ void Application::UpdateAll()
 
 std::string Application::printSensors()
 {
-  std::string res;
+  std::string res="";
   int i = 0;
   for (auto *sensor : this->_sensors)
   {
@@ -139,7 +139,7 @@ std::string Application::printSensors()
 }
 std::string Application::printOutputs()
 {
-  std::string res;
+  std::string res="";
   int i = 0;
   for (auto *output : this->_binOutputs)
   {

@@ -1,32 +1,48 @@
-html,body { height: 100%; background-color: rgb(223, 221, 221);}
+html,body { height: 100%; font-size:larger;background-color: rgb(223, 221, 221);}
 select,input,label::before,textarea,.button,.btn:focus,.btn:active:focus,.btn.active:focus,.btn.focus,.btn:active.focus,.btn.active.focus {
   outline: none; box-shadow: none !important;
 }
+
 .regulator{
-  border: 1px;
+  margin: 5px;
+  padding: 5px;
+  border: 2px;
+  background-color: rgb(169, 166, 166);
   border-style: solid;
-  border-radius: 3px;
-  height: 200px;
-  align-content: flex-start;
+  border-radius: 4px;
+  height: 220px;
+
+}
+.light-timer{
+  margin: 5px;
+  padding: 5px;
+  border: 2px;
+  background-color: rgb(169, 166, 166);
+  border-style: solid;
+  border-radius: 4px;
+  height: 230px;
+  
 }
 .input-selector{
-  border: 1px;
+  border: 2px;
   border-style: solid;
   border-color: darkgrey;
-  border-radius: 3px;
+  border-radius: 4px;
   margin: 3px;
-  padding: 3px;
+  padding: 4px;
 }
 
 .value-display{
+  display: block;
   font-size :32px;;
   font-weight:900;
-  color:rgb(6, 187, 12);
+  color:rgb(7, 244, 15);
   margin: 3px;
   border-style: solid;
-  border: 1px;
+  border: 2px;
   border-radius: 2px;
   border-color: black;
+  float:right;
 }
 
 
@@ -34,11 +50,36 @@ select,input,label::before,textarea,.button,.btn:focus,.btn:active:focus,.btn.ac
   height: 30px;
   width: 40px;
   border-style: solid;
-  border: 1px;
+  border: 3px;
+  border-color: rgb(80, 199, 16);
   border-radius: 5px;
   background-color: red;
   color:white;
   text-align: center;
-  padding-top: 4px;
+  margin :5px;
+  padding:auto;
 }
 
+.time-input{
+  border-radius: 3px;
+  border-color: rgb(250, 245, 245);
+  border-style: solid;
+  margin: 3px;
+  padding: 3px;
+  background-color: darkslategray;
+  color: rgb(240, 239, 239);
+}
+.btn-save{
+  background-color: darkgreen;
+  border:rgb(169, 166, 166) solid  1px;
+  border-radius: 4px;
+  float: right;
+}
+.head{
+  display: flex;
+  flex: content;
+  justify-content: space-around;
+  border:solid 2px;
+  border-radius:4px;
+  
+}

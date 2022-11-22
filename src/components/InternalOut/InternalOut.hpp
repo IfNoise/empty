@@ -25,7 +25,7 @@ InternalOut::InternalOut(struct mgos_config_intout *cfg)
 
 std::string InternalOut::getInfo()
 {
-   return mgos::JSONPrintStringf("{name:%Q,type:%s,pin: %d}",_name.c_str(),"internal",_cfg->pin);
+   return mgos::JSONPrintStringf("{name:%Q,type:%Q,pin: %d}",_name.c_str(),"internal",_cfg->pin);
 }
 
 Status InternalOut::setState( bool state)

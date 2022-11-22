@@ -49,7 +49,7 @@ static InternalOut *Pump{nullptr};
 //================================RPC service methods=========================================
 static void getState(struct mg_rpc_request_info *ri, void *cb_arg,struct mg_rpc_frame_info *fi, struct mg_str args)
 {
- mg_rpc_send_responsef(ri, "%.s", App.printState().c_str());
+ mg_rpc_send_responsef(ri, "%s", App.printState().c_str());
   (void) cb_arg;
   (void) fi;
 }
@@ -57,7 +57,7 @@ static void getState(struct mg_rpc_request_info *ri, void *cb_arg,struct mg_rpc_
 static void getSensors(struct mg_rpc_request_info *ri, void *cb_arg,struct mg_rpc_frame_info *fi, struct mg_str args)
 {
  
-    mg_rpc_send_responsef(ri, "%.s", App.printSensors().c_str());
+    mg_rpc_send_responsef(ri, "%s", App.printSensors().c_str());
 
   (void) cb_arg;
   (void) fi;
@@ -65,7 +65,7 @@ static void getSensors(struct mg_rpc_request_info *ri, void *cb_arg,struct mg_rp
 
 static void getOutputs(struct mg_rpc_request_info *ri, void *cb_arg,struct mg_rpc_frame_info *fi, struct mg_str args)
 {
- mg_rpc_send_responsef(ri, "%.s", App.printOutputs().c_str());
+ mg_rpc_send_responsef(ri, "%s", App.printOutputs().c_str());
   (void) cb_arg;
   (void) fi;
 }

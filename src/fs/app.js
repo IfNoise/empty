@@ -10,54 +10,58 @@ App.settings = {
   callTimeoutMilli: 10000,  // 10 seconds
 };
 
-App.state ={connected: false, frames: []};
-
-App.Header = function(props) {
-  return h(
-      'div', {class: 'p-2 border-bottom bg-light'},
-      h('b', {}, props.app.state.title),
-      h('div', {class: 'float-right'},
-        h('small', {class: 'text-muted mr-2 font-weight-light'},
-          'Websocket connected:'),
-        h('b' ,{},props.app.state.connected ? 'yes' : 'no')));
+App.state = {
+  connected: false,
+  outputs: [],
+  sensors: [],
+  frames: []
 };
 
-App.Footer = function(props) {
+App.Header = function (props) {
+  return h(
+    'div', { class: 'p-2 border-bottom bg-light' },
+    h('b', {}, props.app.state.title),
+    h('div', { class: 'float-right' },
+      h('small', { class: 'text-muted mr-2 font-weight-light' },
+        'Websocket connected:'),
+      h('b', {}, props.app.state.connected ? 'yes' : 'no')));
+};
+
+App.Footer = function (props) {
   var self = this, app = props.app;
 
-  var mkTabButton = function(title, icon, tab, href) {
+  var mkTabButton = function (title, icon, tab, href) {
     var active = (location.hash == href.replace(/.*#/, '#'));
     return h(
-        'a', {
-          href: href,
-          class: 'text-center ' +
-              (active ? 'font-weight-bold text-primary' : 'text-dark'),
-          style: 'flex:1;height:3em;text-decoration:none;' +
-              'border-top: 3px solid ' + (active ? '#007bff' : 'transparent'),
-        },
-        h('div', {class: '', style: 'line-height: 1.4em'},
-          h('i', {class: 'mr-0 fa-fw fa ' + icon, style: 'width: 2em;'}),
-          h('div', {class: 'small'}, title)));
+      'a', {
+      href: href,
+      class: 'text-center ' +
+        (active ? 'font-weight-bold text-primary' : 'text-dark'),
+      style: 'flex:1;height:3em;text-decoration:none;' +
+        'border-top: 3px solid ' + (active ? '#007bff' : 'transparent'),
+    },
+      h('div', { class: '', style: 'line-height: 1.4em' },
+        h('i', { class: 'mr-0 fa-fw fa ' + icon, style: 'width: 2em;' }),
+        h('div', { class: 'small' }, title)));
   };
-
   var proto = App.settings.mdashURL.split(':')[0];
   var base = proto + '://' + location.host + location.pathname;
   var ibase = base.replace(/^https/, 'http');
   return h(
-      'footer', {
-        class: 'd-flex align-items-stretch border-top',
-        style: 'flex-shrink: 0;'
-      },
-      mkTabButton('Dashboard', 'fa-server', App.PageDashboard, '#/'),
-      mkTabButton('Settings', 'fa-gear', App.PageDeviceSettings,'#/config'));
+    'footer', {
+    class: 'd-flex align-items-stretch border-top',
+    style: 'flex-shrink: 0;'
+  },
+    mkTabButton('Dashboard', 'fa-server', App.PageDashboard, '#/'),
+    mkTabButton('Settings', 'fa-gear', App.PageSettings, '#/config'));
 };
 
-App.errorHandler = function(e) {
+App.errorHandler = function (e) {
   var o = ((e.response || {}).data || {}).error || {};
   alert(o.message || e.message || e);
 };
 
-App.setKey = function(obj, key, val) {
+App.setKey = function (obj, key, val) {
   var parts = key.split('.');
   for (var i = 0; i < parts.length; i++) {
     if (i >= parts.length - 1) {
@@ -69,7 +73,7 @@ App.setKey = function(obj, key, val) {
   }
 };
 
-App.getKey = function(obj, key) {
+App.getKey = function (obj, key) {
   var parts = key.split('.');
   for (var i = 0; i < parts.length; i++) {
     if (typeof (obj) != 'object') return undefined;
@@ -79,175 +83,175 @@ App.getKey = function(obj, key) {
   return obj;
 };
 
-App.Toggler = function(props) {
+App.Toggler = function (props) {
   var self = this, state = self.state;
-  self.componentDidMount = function() {
+  self.componentDidMount = function () {
     state.expanded = props.expanded || false;
   };
   var div = state.expanded ?
-      props.children :
-      props.dnone ? h('div', {class: 'd-none'}, props.children) : null;
+    props.children :
+    props.dnone ? h('div', { class: 'd-none' }, props.children) : null;
   return h(
-      'span', {class: props.class || '', style: 'z-index: 999;'},
-      h('a', {
-        onClick: function(ev) {
-          ev.preventDefault();
-          self.setState({expanded: !state.expanded});
-        },
-        href: '#'
+    'span', { class: props.class || '', style: 'z-index: 999;' },
+    h('a', {
+      onClick: function (ev) {
+        ev.preventDefault();
+        self.setState({ expanded: !state.expanded });
       },
-        props.text || '', h('i', {
-          class:
-              'ml-2 fa ' + (state.expanded ? 'fa-caret-down' : 'fa-caret-right')
-        })),
-      props.extra, div);
+      href: '#'
+    },
+      props.text || '', h('i', {
+        class:
+          'ml-2 fa ' + (state.expanded ? 'fa-caret-down' : 'fa-caret-right')
+      })),
+    props.extra, div);
 };
 
-App.Login = function(props) {
+App.Login = function (props) {
   var self = this;
-  self.componentDidMount = function() {
-    self.setState({email: '', pass: ''});
+  self.componentDidMount = function () {
+    self.setState({ email: '', pass: '' });
   };
 
-  self.render = function(props, state) {
+  self.render = function (props, state) {
     return h(
-        'div', {
-          class: 'mx-auto bg-light rounded border my-5',
-          style: 'max-width: 480px;'
-        },
-        h('h3', {class: 'text-center py-3 text-muted'}, 'Smart Light login'),
-        h('div', {class: 'form p-3 rounded w-100'}, h('input', {
-            type: 'email',
-            placeholder: 'Email',
-            class: 'my-2 form-control',
-            onInput: function(ev) {
-              self.setState({email: ev.target.value});
-            }
-          }),
-          h('input', {
-            type: 'password',
-            placeholder: 'Password',
-            class: 'my-2 form-control',
-            onInput: function(ev) {
-              self.setState({pass: ev.target.value});
-            }
-          }),
-          h(App.SpinButton, {
-            class: 'btn-block btn-secondary',
-            disabled: !state.email || !state.pass,
-            title: 'Sign In',
-            icon: 'fa-sign-in',
-            onClick: function() {
-              var h = {
-                Authorization: 'Basic ' + btoa(state.email + ':' + state.pass)
-              };
-              return axios
-                  .get(App.settings.mdashURL + '/customer', {headers: h})
-                  .then(function(res) {
-                    props.app.login(res.data);
-                    preactRouter.route('');
-                  })
-                  .catch(App.errorHandler);
-            }
-          }),
-          h('div', {class: 'mt-2'}, 'No account yet? ',
-            h(App.Toggler, {text: 'Register'},
-              h('div', {}, h('input', {
-                  type: 'email',
-                  placeholder: 'Email',
-                  class: 'my-2 form-control',
-                  onInput: function(ev) {
-                    self.setState({email: ev.target.value});
-                  },
-                }),
-                h(App.SpinButton, {
-                  class: 'btn-block btn-secondary',
-                  icon: 'fa-envelope',
-                  title: 'Send invitation',
-                  disabled: !state.email,
-                  onClick: function() {
-                    var app_id = App.settings.appID ||
-                        location.pathname.split('/')[2] || 'setme';
-                    var args = {
-                      email: state.email,
-                      url: App.settings.mdashURL,
-                      from: 'SmartLight',
-                      redir: location.href,
-                      app_id: app_id,
-                      text: 'Thank you for registering with SmartLight.\n' +
-                          'Your login: EMAIL\n' +
-                          'Your password: PASS\n' +
-                          'Click on the link below to activate your account ' +
-                          'and login:\nREGLINK'
-                    };
-                    return axios.post(App.settings.mdashURL + '/invite', args)
-                        .then(function(res) {
-                          alert('Thank you! Check your inbox and login.');
-                          self.setState({email: ''});
-                          location.reload();
-                        })
-                        .catch(App.errorHandler);
-                  },
-                }))))));
+      'div', {
+      class: 'mx-auto bg-light rounded border my-5',
+      style: 'max-width: 480px;'
+    },
+      h('h3', { class: 'text-center py-3 text-muted' }, 'Smart Light login'),
+      h('div', { class: 'form p-3 rounded w-100' }, h('input', {
+        type: 'email',
+        placeholder: 'Email',
+        class: 'my-2 form-control',
+        onInput: function (ev) {
+          self.setState({ email: ev.target.value });
+        }
+      }),
+        h('input', {
+          type: 'password',
+          placeholder: 'Password',
+          class: 'my-2 form-control',
+          onInput: function (ev) {
+            self.setState({ pass: ev.target.value });
+          }
+        }),
+        h(App.SpinButton, {
+          class: 'btn-block btn-secondary',
+          disabled: !state.email || !state.pass,
+          title: 'Sign In',
+          icon: 'fa-sign-in',
+          onClick: function () {
+            var h = {
+              Authorization: 'Basic ' + btoa(state.email + ':' + state.pass)
+            };
+            return axios
+              .get(App.settings.mdashURL + '/customer', { headers: h })
+              .then(function (res) {
+                props.app.login(res.data);
+                preactRouter.route('');
+              })
+              .catch(App.errorHandler);
+          }
+        }),
+        h('div', { class: 'mt-2' }, 'No account yet? ',
+          h(App.Toggler, { text: 'Register' },
+            h('div', {}, h('input', {
+              type: 'email',
+              placeholder: 'Email',
+              class: 'my-2 form-control',
+              onInput: function (ev) {
+                self.setState({ email: ev.target.value });
+              },
+            }),
+              h(App.SpinButton, {
+                class: 'btn-block btn-secondary',
+                icon: 'fa-envelope',
+                title: 'Send invitation',
+                disabled: !state.email,
+                onClick: function () {
+                  var app_id = App.settings.appID ||
+                    location.pathname.split('/')[2] || 'setme';
+                  var args = {
+                    email: state.email,
+                    url: App.settings.mdashURL,
+                    from: 'SmartLight',
+                    redir: location.href,
+                    app_id: app_id,
+                    text: 'Thank you for registering with SmartLight.\n' +
+                      'Your login: EMAIL\n' +
+                      'Your password: PASS\n' +
+                      'Click on the link below to activate your account ' +
+                      'and login:\nREGLINK'
+                  };
+                  return axios.post(App.settings.mdashURL + '/invite', args)
+                    .then(function (res) {
+                      alert('Thank you! Check your inbox and login.');
+                      self.setState({ email: '' });
+                      location.reload();
+                    })
+                    .catch(App.errorHandler);
+                },
+              }))))));
   };
 };
 
 
-App.SpinButton = function(props) {
+App.SpinButton = function (props) {
   var self = this, state = self.state;
-  self.componentDidMount = function() {
-    self.setState({spin: false});
+  self.componentDidMount = function () {
+    self.setState({ spin: false });
   };
   return h(
-      'button', {
-        class: 'btn ' + (props.class || ''),
-        disabled: props.disabled || state.spin,
-        style: props.style || '',
-        ref: props.ref,
-        onClick: function() {
-          if (!props.onClick) return;
-          self.setState({spin: true});
-          props.onClick().catch(App.errorHandler).then(function() {
-            self.setState({spin: false});
-          });
-        }
-      },
-      h('i', {
-        class: 'mr-1 fa fa-fw ' +
-            (state.spin ? 'fa-refresh' : (props.icon || 'fa-save')) +
-            (state.spin ? ' fa-spin' : '')
-      }),
-      props.title || 'submit');
+    'button', {
+    class: 'btn ' + (props.class || ''),
+    disabled: props.disabled || state.spin,
+    style: props.style || '',
+    ref: props.ref,
+    onClick: function () {
+      if (!props.onClick) return;
+      self.setState({ spin: true });
+      props.onClick().catch(App.errorHandler).then(function () {
+        self.setState({ spin: false });
+      });
+    }
+  },
+    h('i', {
+      class: 'mr-1 fa fa-fw ' +
+        (state.spin ? 'fa-refresh' : (props.icon || 'fa-save')) +
+        (state.spin ? ' fa-spin' : '')
+    }),
+    props.title || 'submit');
 };
 
-App.DeviceWidget = function(props) {
+App.DeviceWidget = function (props) {
   var self = this;
   var url = App.settings.mdashURL + '/api/v2/m/device?access_token=' + props.k;
 
-  self.componentDidMount = function() {
-    self.setState({device: null});
+  self.componentDidMount = function () {
+    self.setState({ device: null });
     self.refresh();
   };
 
-  self.refresh = function() {
+  self.refresh = function () {
     return axios.get(url)
-        .then(function(res) {
-          self.setState({device: res.data});
-        })
-        .catch(function(err) {
-          self.setState({device: {id: ''}});
-        });
+      .then(function (res) {
+        self.setState({ device: res.data });
+      })
+      .catch(function (err) {
+        self.setState({ device: { id: '' } });
+      });
   };
 
-  self.render = function(props, state) {
+  self.render = function (props, state) {
     var d = state.device;
     if (!d)
       return h(
-          'div', {class: 'py-2 border-bottom'},
-          h('div', {class: 'h-100 d-flex align-items-center'},
-            h('div', {class: 'text-center w-100 text-muted'},
-              h('i', {class: 'fa fa-refresh fa-spin'}), h('br'),
-              'Initialising device...')));
+        'div', { class: 'py-2 border-bottom' },
+        h('div', { class: 'h-100 d-flex align-items-center' },
+          h('div', { class: 'text-center w-100 text-muted' },
+            h('i', { class: 'fa fa-refresh fa-spin' }), h('br'),
+            'Initialising device...')));
 
     var shadow = d.shadow || {};
     var reported = (shadow.state || {}).reported || {};
@@ -256,442 +260,536 @@ App.DeviceWidget = function(props) {
     var cbid = 'toggle-' + d.id;
     var checked = ar.on || false;
     var toggle =
-        h('span', {class: 'text-nowrap d-flex justify-content-end'},
-          h('small', {class: 'mr-2 my-auto text-muted'}, 'toggle light:'),
-          h('span', {class: 'toggle my-auto'}, h('input', {
-              type: 'checkbox',
-              id: cbid,
-              disabled: !online,
-              checked: checked,
-              onChange: function(ev) {
-                var body = {shadow: {state: {desired: {}}}};
-                body.shadow.state.desired.on = ev.target.checked;
-                axios.post(url, body).catch(App.errorHandler);
-              },
-            }),
-            h('label', {'for': cbid}, h('span'))));
+      h('span', { class: 'text-nowrap d-flex justify-content-end' },
+        h('small', { class: 'mr-2 my-auto text-muted' }, 'toggle light:'),
+        h('span', { class: 'toggle my-auto' }, h('input', {
+          type: 'checkbox',
+          id: cbid,
+          disabled: !online,
+          checked: checked,
+          onChange: function (ev) {
+            var body = { shadow: { state: { desired: {} } } };
+            body.shadow.state.desired.on = ev.target.checked;
+            axios.post(url, body).catch(App.errorHandler);
+          },
+        }),
+          h('label', { 'for': cbid }, h('span'))));
     return h(
-        'div', {class: 'py-2 border-bottom d-flex flex-row'},
-        h('div', {class: 'mr-5'},
-          h('b', {class: 'small font-weight-bold'}, d.id),
-          h('div', {class: ''},
-            h('b',
-              {class: 'small ' + (online ? 'text-success' : 'text-danger')},
-              online ? 'online' : 'offline'))),
-        toggle,
-        h('div', {class: 'flex-grow-1 d-flex justify-content-end mr-2 mt-1'},
-          h('a', {href: '/devices/' + encodeURIComponent(props.k)},
-            h('i', {class: 'fa fa-cog'}))));
+      'div', { class: 'py-2 border-bottom d-flex flex-row' },
+      h('div', { class: 'mr-5' },
+        h('b', { class: 'small font-weight-bold' }, d.id),
+        h('div', { class: '' },
+          h('b',
+            { class: 'small ' + (online ? 'text-success' : 'text-danger') },
+            online ? 'online' : 'offline'))),
+      toggle,
+      h('div', { class: 'flex-grow-1 d-flex justify-content-end mr-2 mt-1' },
+        h('a', { href: '/devices/' + encodeURIComponent(props.k) },
+          h('i', { class: 'fa fa-cog' }))));
   };
 };
 
 
-App.PageSettings = function(props) {
+App.PageSettings = function (props) {
   var self = this;
-  self.componentDidMount = function() {
-    props.app.setState({title: 'Settings'});
-    };
-    var mkStringItem = function(label, k, dis, c, r) {
-      return h(
-          'div', {class: 'form-group row my-2'},
-          h('label', {class: 'col-form-label col-4'}, label),
-          h('div', {class: 'col-8'}, h('input', {
-              type: 'text',
-              // value: state.c[k] || r.config[k] || '',
-              value: App.getKey(c, k) || App.getKey(r, k) || '',
-              placeholder: App.getKey(c, k),
-              disabled: dis,
-              class: 'form-control',
-              onInput: function(ev) {
-                App.setKey(c, k, ev.target.value);
-              },
-            })));
-    };
-    var mkIntItem = function(label, k, dis, c, r) {
-      return h(
-          'div', {class: 'form-group row my-2'},
-          h('label', {class: 'col-form-label col-4'}, label),
-          h('div', {class: 'col-8'}, h('input', {
-              type: 'number',
-              step: 1,
-              // value: state.c[k] || r.config[k] || '',
-              value: App.getKey(c, k) || App.getKey(r, k) || '',
-              placeholder: App.getKey(c, k),
-              disabled: dis,
-              class: 'form-control',
-              onInput: function(ev) {
-                App.setKey(c, k, ev.target.value);
-              },
-            })));
-    };
-
-    var mkFloatItem = function(label, k, dis, c, r) {
-      return h(
-          'div', {class: 'form-group row my-2'},
-          h('label', {class: 'col-form-label col-4'}, label),
-          h('div', {class: 'col-8'}, h('input', {
-              type: 'number',
-              step: 0.1,
-              // value: state.c[k] || r.config[k] || '',
-              value: App.getKey(c, k) || App.getKey(r, k) || '',
-              placeholder: App.getKey(c, k),
-              disabled: dis,
-              class: 'form-control',
-              onInput: function(ev) {
-                App.setKey(c, k, ev.target.value);
-              },
-            })));
-    };
-    var mkBoolItem = function(label, k, dis, c, r) {
-      return h(
-          'div', {class: 'form-group row my-2'},
-          h('label', {class: 'col-form-label col-4'}, label),
-          h('div', {class: 'col-8'}, h('input', {
-              type: 'checkbox',
-              // value: state.c[k] || r.config[k] || '',
-              value: App.getKey(c, k),
-              checked: App.getKey(c, k),
-              disabled: dis,
-              class: 'form-control',
-              onInput: function(ev) {
-                App.setKey(c, k, ev.target.value);
-              },
-            })));
-    };
-    var mkchap = function(label,c){
-     var items=Object.keys(c);
-
-      return h(
-                 'div', {class: 'd-block  p-2'},
-                  h('h2',{},label),items.map(function(k){
-                  var type=typeof c[k];
-                  if(type==='object')
-                  {
-                    return mkchap(k,c[k]);
-                  }else if(type==='string')
-                  {
-                    return mkStringItem(k,k,false,c,c)
-                  }else if(type==='number')
-                  {
-                    return mkIntItem(k,k,false,c[k],c)
-                  }else if(type==='boolean')
-                  {
-                    return mkBoolItem(k,k,false,c[k],c)
-                  }
-                })); 
-
-    }
-
-
-  self.render = function(props, state) {
-    var chapters= Object.keys(props.app.state.config);
-    return h(
-        'div', {class: 'overflow-auto p-2'},
-            h('div', {class: 'h-100  align-items-center scroll'},chapters ?
-            chapters.map(function(k) {
-
-              return mkchap(k,props.app.state.config[k]);
-              
-            }):''));
-  }
-};
-
-App.PageDashboard = function(props) {
-  var self = this;
-  self.componentDidMount = function() {
-    props.app.setState({title: 'Dashboard'});
+  self.componentDidMount = function () {
+    props.app.setState({ title: 'Settings' });
+  };
  
-    };
-    var mkreg = function(obj){
-      return h('div',{
-        class: 'regulator'
-      },
-      h('h3',{},App.getKey(obj,'name')),
-      h('select',{class: 'input-selector'},
-      h('option',{},'DTemp0'),
-      h('option',{},'DTemp1'),
-      h('option',{},'DTemp2')),
-      h('select',{class: 'input-selector'},
-      h('option',{},'Heater'),
-      h('option',{},'Fan'),
-      h('option',{},'Fan Speed')),
-      h('div',{class:'d-flex '},h('div',{class:'value-display'},'28 C'),
-      h('div',{class:'indicator'},'ON')))
-    }
-    var mkrow = function(label, k, dis, c, r) {
-      return h(
-          'div', {class: 'form-group row my-2'},
-          h('label', {class: 'col-form-label col-4'}, label),
-          h('div', {class: 'col-8'}, h('input', {
-              type: 'number',
-              // value: state.c[k] || r.config[k] || '',
-              value: App.getKey(c, k) || App.getKey(r, k) || '',
-              placeholder: label,
-              disabled: dis,
-              class: 'form-control',
-              onInput: function(ev) {
-                App.setKey(c, k, ev.target.value);
-              },
-            })));
-    };
-    
-  self.render = function(props, state) {
+  const mkStringItem = function (label, k, dis, c, r) {
     return h(
-        'div', {class: 'overflow-auto p-2'},
-            h('div', {class: 'h-100 d-flex '},
-              h('div',
-                {class: 'w-100 text-muted font-weight-light',style:'scroll'},
-                 mkreg(props.app.state.config.reg1)
-                )));
+      'div', { class: 'form-group row my-2' },
+      h('label', { class: 'col-form-label col-4' }, label),
+      h('div', { class: 'col-8' }, h('input', {
+        type: 'text',
+        // value: state.c[k] || r.config[k] || '',
+        value: App.getKey(c, k) || App.getKey(r, k) || '',
+        placeholder: App.getKey(c, k),
+        disabled: dis,
+        class: 'form-control',
+        onInput: function (ev) {
+          App.setKey(c, k, ev.target.value);
+        },
+      })));
+  };
+  const mkIntItem = function (label, k, dis, c, r) {
+    return h(
+      'div', { class: 'form-group row my-2' },
+      h('label', { class: 'col-form-label col-4' }, label),
+      h('div', { class: 'col-8' }, h('input', {
+        type: 'number',
+        step: 1,
+        // value: state.c[k] || r.config[k] || '',
+        value: App.getKey(c, k) || App.getKey(r, k) || '',
+        placeholder: App.getKey(c, k),
+        disabled: dis,
+        class: 'form-control',
+        onInput: function (ev) {
+          App.setKey(c, k, ev.target.value);
+        },
+      })));
+  };
+
+  const mkFloatItem = function (label, k, dis, c, r) {
+    return h(
+      'div', { class: 'form-group row my-2' },
+      h('label', { class: 'col-form-label col-4' }, label),
+      h('div', { class: 'col-8' }, h('input', {
+        type: 'number',
+        step: 0.1,
+        // value: state.c[k] || r.config[k] || '',
+        value: App.getKey(c, k) || App.getKey(r, k) || '',
+        placeholder: App.getKey(c, k),
+        disabled: dis,
+        class: 'form-control',
+        onInput: function (ev) {
+          App.setKey(c, k, ev.target.value);
+        },
+      })));
+  };
+  const mkBoolItem = function (label, k, dis, c, r) {
+    return h(
+      'div', { class: 'form-group row my-2' },
+      h('label', { class: 'col-form-label col-4' }, label),
+      h('div', { class: 'col-8' }, h('input', {
+        type: 'checkbox',
+        // value: state.c[k] || r.config[k] || '',
+        //value: App.getKey(c, k),
+        checked: c,
+        disabled: dis,
+        class: 'form-control',
+        onInput: function (ev) {
+          App.setKey(c, k, ev.target.value);
+        },
+      })));
+  };
+  const mkchap = function (label, c) {
+    var items = Object.keys(c);
+
+    return h(
+      'div', { class: 'd-block  p-2' },
+      h('h2', {}, label), items.map(function (k) {
+        var type = typeof c[k];
+        if (type === 'object') {
+          return mkchap(k, c[k]);
+        } else if (type === 'string') {
+          return mkStringItem(k, k, false, c, c)
+        } else if (type === 'number') {
+          return mkIntItem(k, k, false, c[k], c)
+        } else if (type === 'boolean') {
+          return mkBoolItem(k, k, false, c[k], c)
+        }
+      }));
+
+  }
+
+ const saveBtn=function(config){
+  return h('button',{class:'btn btn-success'},'Save');
+ }
+
+  self.render = function (props, state) {
+    var chapters = Object.keys(props.app.state.config);
+    return h(
+      'div', { },
+      h('div',{class:'overflow-auto p-2'},
+      h('div', { class: 'h-100   align-items-center scroll' }, chapters ?
+        chapters.map(function (k) {
+
+          return mkchap(k, props.app.state.config[k]);
+
+        }) : '')),
+        h('div',{class:'d-block w-100'},saveBtn()));
   }
 };
 
-App.PageAddDevice = function(props) {
-  var self = this;
+App.Regulator = function (props) {
+  let self = this;
+  const app = props.app;
+  const obj = props.obj;
+  self.componentDidMount = function () {
+    props.app.setState({ refresh: true });
+  };
+  const mkSensSel = (app) => {
+    const sens = app.state.sensors;
+    return h('select', { class: 'input-selector' },
+      sens.map((s) => {
+        return h('option', {}, s.name)
+      }));
+  }
+  const mkOutSel = (app, obj) => {
+    const outs = app.state.outputs;
+    return h('select', {
+      class: 'input-selector',
+      onChange: (ev) => {
+        obj.input = ev.target.value;
+      }
+    },
+      outs.map((o) => {
+        return h('option', {}, o.name)
+      }));
 
-  self.componentDidMount = function() {
-    props.app.setState({title: 'Add Device'});
-    self.setState({step: 0, ssid: '', pass: '', public_key: ''});
+  }
+  const mkVDisp = (app, sensor, label) => {
+    return h('div', { class: 'd-block' },
+      h('small', { class: 'mr-2 my-auto text-muted' }, label),
+      h('div', { class: 'value-display' }, app.state.sensors.find((item) => { return item.name == sensor }).state + '°C'))
+  }
+  return h('div', { class: 'regulator ' },
+  h('div', { class: 'head' },
+  h('div', {style:'font-size:22pt'}, App.getKey(obj, 'name')),
+  h('i', { class: 'fa fa-solid fa-power-off' }),
+  h('input',{
+    type:'checkbox',
+    style:'width: 24px'
+  },'enable'),
+  h('div', { class: 'indicator' }, 'ON')),
+    
+    !app.state.loaded ? h('small', { class: 'text-muted mr-2 font-weight-light' }, 'Loading') :
+    mkSensSel(app),
+    mkOutSel(app),
+    mkVDisp(app, obj.input, obj.input.name),
+    
+    h('button',{class:'btn-save'},'Save'))
+}
+App.LightTimer = function (props) {
+  let self = this;
+  const app = props.app;
+  const obj = props.obj;
+  self.componentDidMount = function () {
+    props.app.setState({ refresh: true });
+  };
+  var mkTimeItem = function (label, k, dis, c, r) {
+    return h(
+      'div', { class: 'form-group row my-2' },
+      h('label', { class: 'col-form-label col-4' }, label),
+      h('div', { class: 'col-8' }, h('input', {
+        type: 'time',
+        step: 60,
+        // value: state.c[k] || r.config[k] || '',
+        value: App.getKey(c, k) || App.getKey(r, k) || '',
+        placeholder: App.getKey(c, k),
+        disabled: dis,
+        class: 'time-input',
+        onInput: function (ev) {
+          App.setKey(c, k, ev.target.value);
+        },
+      })))
+  }
+  const mkOutSel = (app, obj) => {
+    const outs = app.state.outputs;
+    return h('select', {
+      class: 'input-selector',
+      onChange: (ev) => {
+        obj.input = ev.target.value;
+      }
+    },
+      outs.map((o) => {
+        return h('option', {}, o.name)
+      }));
+
+  }
+
+  return h('div', { class: 'light-timer ' },
+    h('h3', {}, App.getKey(obj, 'name')),
+    h('i', { class: 'fa fa-solid fa-power-off' }),
+    !app.state.loaded ? h('small', { class: 'text-muted mr-2 font-weight-light' }, 'Loading') :
+    mkOutSel(app),
+    mkTimeItem('Start:', 'start', false, obj.start, obj.start),
+    mkTimeItem('Stop:', 'stop', false, obj.stop, obj.stop),
+    h('div', { class: 'indicator' }, 'ON'))
+}
+
+App.PageDashboard = function (props) {
+  const self = this;
+  self.componentDidMount = function () {
+    props.app.setState({ title: 'Dashboard' });
   };
 
-  self.componentWillUnmount = function() {
+
+  self.render = function (props, state) {
+
+    return h(
+      'div', { class: 'overflow-auto p-2' },
+      h('div', { class: 'h-100 d-flex ' },
+        h('div',
+          { class: 'w-100 text-muted font-weight-light', style: 'scroll' }, !props.app.state.loaded ? h('h1', {}, 'Loading') :
+          h(App.Regulator, { app: props.app, obj: props.app.state.config.reg1 }),
+          h(App.Regulator, { app: props.app, obj: props.app.state.config.reg2 }),
+          h(App.Regulator, { app: props.app, obj: props.app.state.config.reg3 }),
+          h(App.LightTimer, { app: props.app, obj: props.app.state.config.light1 })
+        )));
+  }
+};
+
+App.PageAddDevice = function (props) {
+  var self = this;
+
+  self.componentDidMount = function () {
+    props.app.setState({ title: 'Add Device' });
+    self.setState({ step: 0, ssid: '', pass: '', public_key: '' });
+  };
+
+  self.componentWillUnmount = function () {
     self.unmounted = true;
   };
 
   var alertClass = 'p-2 small text-muted font-weight-light';
   var Step0 =
-      h('div', {},
-        h('div', {class: alertClass}, 'Go to your phone settings', h('br'),
-          'Join WiFi network SmartLight-XXXX', h('br'),
-          'Return to this screen and press the Scan button'),
-        h(App.SpinButton, {
-          class: 'btn-block btn-primary border font-weight-light',
-          title: 'Scan',
-          icon: 'fa-search',
-         
-        }));
+    h('div', {},
+      h('div', { class: alertClass }, 'Go to your phone settings', h('br'),
+        'Join WiFi network SmartLight-XXXX', h('br'),
+        'Return to this screen and press the Scan button'),
+      h(App.SpinButton, {
+        class: 'btn-block btn-primary border font-weight-light',
+        title: 'Scan',
+        icon: 'fa-search',
+
+      }));
   var Step1 = h(
-      'div', {},
+    'div', {},
+    h('a', {
+      href: location.href,
+      class: 'link text-decoration-none',
+      onClick: function () {
+        self.setState({ step: 0 });
+      }
+    },
+      '\u2190', ' back'),
+    h('div', { class: alertClass + ' mt-2' }, 'Found new device!'), h('input', {
+      class: 'form-control mb-2',
+      type: 'text',
+      placeholder: 'WiFi network name',
+      onInput: function (ev) {
+        self.setState({ ssid: ev.target.value });
+      },
+    }),
+    h('input', {
+      class: 'form-control mb-2',
+      type: 'text',
+      placeholder: 'WiFi password',
+      onInput: function (ev) {
+        self.setState({ pass: ev.target.value });
+      },
+    }),
+    h(App.SpinButton, {
+      class: 'btn-block btn-primary font-weight-light',
+      title: 'Configure device WiFi',
+      icon: 'fa-save',
+      disabled: !self.state.ssid
+    }));
+  var Step2 =
+    h('div', {},
       h('a', {
         href: location.href,
         class: 'link text-decoration-none',
-        onClick: function() {
-          self.setState({step: 0});
+        onClick: function () {
+          self.setState({ step: 1 });
         }
       },
         '\u2190', ' back'),
-      h('div', {class: alertClass + ' mt-2'}, 'Found new device!'), h('input', {
-        class: 'form-control mb-2',
-        type: 'text',
-        placeholder: 'WiFi network name',
-        onInput: function(ev) {
-          self.setState({ssid: ev.target.value});
-        },
-      }),
-      h('input', {
-        class: 'form-control mb-2',
-        type: 'text',
-        placeholder: 'WiFi password',
-        onInput: function(ev) {
-          self.setState({pass: ev.target.value});
-        },
-      }),
+      h('div', { class: alertClass + ' mt-2' }, 'WiFi configuretion applied. ',
+        'Go to your phone settings,', h('br'),
+        'Join back to your WiFi network,', h('br'),
+        'Return to this screen and press on Register device.'),
       h(App.SpinButton, {
-        class: 'btn-block btn-primary font-weight-light',
-        title: 'Configure device WiFi',
-        icon: 'fa-save',
-        disabled: !self.state.ssid
+        class: 'btn-block btn-primary border font-weight-light',
+        title: 'Register device',
+        icon: 'fa-plus-circle'
       }));
-  var Step2 =
-      h('div', {},
-        h('a', {
-          href: location.href,
-          class: 'link text-decoration-none',
-          onClick: function() {
-            self.setState({step: 1});
-          }
-        },
-          '\u2190', ' back'),
-        h('div', {class: alertClass + ' mt-2'}, 'WiFi configuretion applied. ',
-          'Go to your phone settings,', h('br'),
-          'Join back to your WiFi network,', h('br'),
-          'Return to this screen and press on Register device.'),
-        h(App.SpinButton, {
-          class: 'btn-block btn-primary border font-weight-light',
-          title: 'Register device',
-          icon: 'fa-plus-circle'
-        }));
   var steps = [Step0, Step1, Step2];
-  return h('div', {class: 'overflow-auto p-2'}, steps[self.state.step]);
+  return h('div', { class: 'overflow-auto p-2' }, steps[self.state.step]);
 };
 
-App.PageDeviceSettings = function(props) {
+App.PageDeviceSettings = function (props) {
   var self = this;
   var url = App.settings.mdashURL + '/api/v2/m/device?access_token=' + props.k;
 
-  self.componentDidMount = function() {
-    props.app.setState({title: 'Devices / '});
-    self.setState({device: null, c: {}});
+  self.componentDidMount = function () {
+    props.app.setState({ title: 'Devices / ' });
+    self.setState({ device: null, c: {} });
     self.refresh();
   };
 
-  self.componentWillUnmount = function() {
+  self.componentWillUnmount = function () {
     self.unmounted = true;
   };
 
-  self.refresh = function() {
+  self.refresh = function () {
     return axios.get(url)
-        .then(function(res) {
-          self.setState({device: res.data});
-          props.app.setState({title: 'Devices / ' + res.data.id});
-        })
-        .catch(function(err) {
-          self.setState({device: {id: ''}});
-        });
+      .then(function (res) {
+        self.setState({ device: res.data });
+        props.app.setState({ title: 'Devices / ' + res.data.id });
+      })
+      .catch(function (err) {
+        self.setState({ device: { id: '' } });
+      });
   };
 
-  var mkin = function(ph) {
+  var mkin = function (ph) {
     return h(
-        'input', {type: 'text', placeholder: ph, class: 'my-2 form-control'});
+      'input', { type: 'text', placeholder: ph, class: 'my-2 form-control' });
   };
-  var mkrow = function(label, k, dis, c, r) {
+  var mkrow = function (label, k, dis, c, r) {
     return h(
-        'div', {class: 'form-group row my-2'},
-        h('label', {class: 'col-form-label col-4'}, label),
-        h('div', {class: 'col-8'}, h('input', {
-            type: 'text',
-            // value: state.c[k] || r.config[k] || '',
-            value: App.getKey(c, k) || App.getKey(r, k) || '',
-            placeholder: label,
-            disabled: !!dis || !r.online,
-            class: 'form-control',
-            onInput: function(ev) {
-              App.setKey(c, k, ev.target.value);
-            },
-          })));
+      'div', { class: 'form-group row my-2' },
+      h('label', { class: 'col-form-label col-4' }, label),
+      h('div', { class: 'col-8' }, h('input', {
+        type: 'text',
+        // value: state.c[k] || r.config[k] || '',
+        value: App.getKey(c, k) || App.getKey(r, k) || '',
+        placeholder: label,
+        disabled: !!dis || !r.online,
+        class: 'form-control',
+        onInput: function (ev) {
+          App.setKey(c, k, ev.target.value);
+        },
+      })));
   };
 
-  self.render = function(props, state) {
+  self.render = function (props, state) {
     // if (!state.device) return 'loading ...';
     var r = (((state.device || {}).shadow || {}).state || {}).reported || {};
     return h(
-        'div', {class: 'px-2 form'}, h('div', {class: 'my-1'}, '\u00a0'),
-        mkrow('Name', 'name', false, state.c, r), h(App.SpinButton, {
-          class: 'btn-block btn-primary mt-3',
-          title: 'Save device settings',
-          icon: 'fa-save',
-          onClick: function() {
-            var url =
-                App.settings.mdashURL + '/m/device?access_token=' + props.k;
-            var data = {shadow: {desired: {name: state.c.name}}};
-            return axios({method: 'POST', url: url, data: data})
-                .then(self.refresh)
-                .catch(App.errorHandler);
-          }
-        }),
-        h('hr'),
-        h('div', {class: 'small text-muted mt-4'},
-          'NOTE: device deletion cannot be undone'),
-        h(App.SpinButton, {
-          class: 'btn-block btn-danger mt-3',
-          title: 'Delete device',
-          icon: 'fa-times',
-          onClick: function() {
-            var url = App.settings.mdashURL +
-                '/customer?access_token=' + props.app.state.u.token;
-            var keys = props.app.state.u.pubkeys || {};
-            delete keys[props.k];
-            return axios({method: 'POST', url: url, data: {pubkeys: keys}})
-                .then(function(res) {
-                  props.app.setState({u: res.data});
-                  preactRouter.route('');
-                })
-                .catch(App.errorHandler);
-          }
-        }));
+      'div', { class: 'px-2 form' }, h('div', { class: 'my-1' }, '\u00a0'),
+      mkrow('Name', 'name', false, state.c, r), h(App.SpinButton, {
+        class: 'btn-block btn-primary mt-3',
+        title: 'Save device settings',
+        icon: 'fa-save',
+        onClick: function () {
+          var url =
+            App.settings.mdashURL + '/m/device?access_token=' + props.k;
+          var data = { shadow: { desired: { name: state.c.name } } };
+          return axios({ method: 'POST', url: url, data: data })
+            .then(self.refresh)
+            .catch(App.errorHandler);
+        }
+      }),
+      h('hr'),
+      h('div', { class: 'small text-muted mt-4' },
+        'NOTE: device deletion cannot be undone'),
+      h(App.SpinButton, {
+        class: 'btn-block btn-danger mt-3',
+        title: 'Delete device',
+        icon: 'fa-times',
+        onClick: function () {
+          var url = App.settings.mdashURL +
+            '/customer?access_token=' + props.app.state.u.token;
+          var keys = props.app.state.u.pubkeys || {};
+          delete keys[props.k];
+          return axios({ method: 'POST', url: url, data: { pubkeys: keys } })
+            .then(function (res) {
+              props.app.setState({ u: res.data });
+              preactRouter.route('');
+            })
+            .catch(App.errorHandler);
+        }
+      }));
   };
 };
 
-App.Content = function(props) {
+App.Content = function (props) {
   return h(
-      preactRouter.Router, {
-        history: History.createHashHistory(),
-        onChange: function(ev) {
-          props.app.setState({url: ev.url});
-        }
-      },
-      h(App.PageDashboard, {app: props.app, default: true}),
-      h(App.PageSettings, {app: props.app, path: 'config'}));
+    preactRouter.Router, {
+    history: History.createHashHistory(),
+    onChange: function (ev) {
+      props.app.setState({ url: ev.url });
+    }
+  },
+    h(App.PageDashboard, { app: props.app, default: true }),
+    h(App.PageSettings, { app: props.app, path: 'config' }));
 };
 
-App.Instance = function(props) {
+App.Instance = function (props) {
   var self = this;
   App.self = self;
 
-  self.componentDidMount = function() {
-    const logframe = (marker, frame) => {
-      self.setState(
-          state => ({
-            connected: self.state.connected,
-            frames: self.state.frames.concat(marker + JSON.stringify(frame))
-          }));
-    };
-
+  self.componentDidMount = function () {
+    
+    const loadSensors=function(){
+      return self.rpc.call('Get.Sensors', {}, 50000)
+        .then(res => {
+          self.setState({ sensors: res.result.sensors });
+          console.log(res);
+        });
+    }
+    const loadConfig=function(){
+      return self.rpc.call('Config.Get', {}, 50000)
+      .then(res => {
+        self.setState({ config: res.result });
+        console.log(res);
+        //
+      })  
+    }
+    const loadOutputs = function(){
+      return self.rpc.call('Get.Outputs', {}, 50000)
+        .then(res => {
+          self.setState({ outputs: res.result.outputs });
+          console.log(res);
+          self.setState({ loaded: true });
+      }).catch(err => {
+        console.log(err);
+      });
+    }
     // Setup JSON-RPC engine
     var rpc = mkrpc('ws://' + '192.168.2.160' + '/rpc');
     rpc.onopen = ev => {
       // When RPC is connected, fetch list of supported RPC services
-      self.setState({connected: true});
-      self.rpc.call('Config.Get',{},20000)
-    .then(res => {
-      self.setState({config:res.result});
-      console.log(res);
-    }).catch(err=>console.log(err));
+      self.setState({ connected: true });
+
+      loadConfig().then(()=>loadSensors()).then(()=>loadOutputs()).finally(()=>{
+        self.setState({ loaded: true }); 
+        console.log('All data loaded')
+      })
+
+      
+
+
+
     };
-    rpc.onclose = ev => self.setState({connected: false});
+    rpc.onclose = ev => self.setState({ connected: false });
     //rpc.onout = ev => logframe('-> ', ev);
     //rpc.onin = ev => logframe('<- ', ev);
     self.rpc = rpc;
-    
+
   };
 
-  self.logout = function() {
+  self.logout = function () {
     delete localStorage.sltok;
-    self.setState({u: null});
+    self.setState({ u: null });
     return Promise.resolve();
   };
 
-  self.login = function(u) {
-    self.setState({u: u});
+  self.login = function (u) {
+    self.setState({ u: u });
     localStorage.sltok = u.token;
     if (location.search.length > 0)
       location.href = location.protocol + '//' + location.host +
-          location.pathname + location.hash;
+        location.pathname + location.hash;
   };
 
-  self.render = function(props, state) {
-    var p = {app: self};
-  //  if (self.state.loading) return h('div');    // Show blank page when loading
-  //  if (!self.state.u) return h(App.Login, p);  // Show login unless logged
+  self.render = function (props, state) {
+    var p = { app: self };
+  if (!self.state.loaded) return h('div',{style:'font-size:30pt'},'Loading...');    // Show blank page when loading
+    //  if (!self.state.u) return h(App.Login, p);  // Show login unless logged
     return h(
-        'div', {
-          class: 'main border',
-          style: 'max-width: 480px; margin: 0 auto; ' +
-              'min-height: 100%; max-height: 100%;' +
-              'display:grid;grid-template-rows: auto 1fr auto;' +
-              'grid-template-columns: 100%;',
-        },
-        h(App.Header, p),h(App.Content,p),h(App.Footer, p));
+      'div', {
+      class: 'main border',
+      style: 'max-width: 480px; margin: 0 auto; ' +
+        'min-height: 100%; max-height: 100%;' +
+        'display:grid;grid-template-rows: auto 1fr auto;' +
+        'grid-template-columns: 100%;',
+    },
+      h(App.Header, p), h(App.Content, p), h(App.Footer, p));
   };
 
   return self.render(props, self.state);
 };
 
-window.onload = function() {
+window.onload = function () {
   if (!window.localStorage) alert('Unsupported platform!');
   preact.render(h(App.Instance), document.body);
 
   if ('serviceWorker' in navigator)  // for PWA
     navigator.serviceWorker.register('js/service-worker.js')
-        .catch(function(err) {});
+      .catch(function (err) { });
 };

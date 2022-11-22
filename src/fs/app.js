@@ -294,6 +294,7 @@ App.PageSettings = function (props) {
   var self = this;
   self.componentDidMount = function () {
     props.app.setState({ title: 'Settings' });
+    self.setState({changes:[]});
   };
  
   const mkStringItem = function (label, k, dis, c, r) {
@@ -359,7 +360,9 @@ App.PageSettings = function (props) {
         disabled: dis,
         class: 'form-control',
         onInput: function (ev) {
-          App.setKey(c, k, ev.target.value);
+          //self.setState({changes: {[k]:ev.target.value}});
+          self.setState({changes:[ ... self.state.changes,{[k]:!ev.target.checked}]});
+          
         },
       })));
   };
@@ -384,21 +387,29 @@ App.PageSettings = function (props) {
   }
 
  const saveBtn=function(config){
-  return h('button',{class:'btn btn-success'},'Save');
+  return h('button',{class:'btn btn-success float-right'},'Save');
+ }
+ const rstBtn=function(){
+  return h('button',{class:'btn btn-danger float-right',
+            onClick:(e)=>{
+              self.setState({changes:[]});
+            }},'Reset');
  }
 
   self.render = function (props, state) {
     var chapters = Object.keys(props.app.state.config);
     return h(
       'div', { },
-      h('div',{class:'overflow-auto p-2'},
-      h('div', { class: 'h-100   align-items-center scroll' }, chapters ?
+      h('div', { class: 'conf-page scroll items-align-stretch ' }, chapters ?
         chapters.map(function (k) {
 
           return mkchap(k, props.app.state.config[k]);
 
-        }) : '')),
-        h('div',{class:'d-block w-100'},saveBtn()));
+        }) : ''),
+        h('div',{class:'d-block w-100'},
+        h('div',{class:'d-block chng-box w-100'},JSON.stringify(self.state.changes)),
+        rstBtn(),
+        saveBtn()));
   }
 };
 

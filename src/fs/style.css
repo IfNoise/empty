@@ -83,3 +83,12 @@ select,input,label::before,textarea,.button,.btn:focus,.btn:active:focus,.btn.ac
   border-radius:4px;
   
 }
+.conf-page{
+  overflow-x: hidden;
+  height: 720px;
+}
+.chng-box{
+  width: 100px;
+  height: 80px;
+  font-size: xx-small;
+}

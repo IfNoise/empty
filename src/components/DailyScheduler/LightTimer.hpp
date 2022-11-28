@@ -41,5 +41,5 @@ void LightTimer::Update()
       off();
       break;
     }
-  }
+  }else{off();}
 }

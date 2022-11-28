@@ -19,7 +19,7 @@ filesystem:
   - src/fs
 
 config_schema:
-  - ["mqtt.enable", true]  
+  - ["mqtt.enable", false]  
   - ["mqtt.server", "192.168.2.22:1883"]
   - ["mqtt.user", "noise83"]
   - ["mqtt.pass", "neuro83"]
@@ -29,7 +29,7 @@ config_schema:
   - ["wifi.sta.enable",true]
   - ["wifi.sta.ssid", "if_noise"]
   - ["wifi.sta.pass", "00000006"]
-  - ["debug.stderr_topic", "debug/stderr"]
+ # - ["debug.stderr_topic", "debug/stderr"]
  # - ["dash.enable",true]
  # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
   - ["i2c.enable", true]

@@ -75,7 +75,8 @@ void Regulator::Update()
         }
     }
     else
-    {
+    {   
+        _output->setState(false);
         return;
     }
 }

@@ -203,25 +203,25 @@ std::string Application::printState()
   {
     if (i == 0)
     {
-      mgos::JSONAppendStringf(&res, "{sensors: [{name:%s,state:%B}", sensor->getName().c_str(),sensor->getState());
+      mgos::JSONAppendStringf(&res, "{sensors: [{name:%Q,state:%.2f}", sensor->getName().c_str(),sensor->getState());
     }
     else
     {
-      mgos::JSONAppendStringf(&res, ",{name:%s,state:%B}", sensor->getName().c_str(),sensor->getState());
+      mgos::JSONAppendStringf(&res, ",{name:%Q,state:%.2f}", sensor->getName().c_str(),sensor->getState());
     }
     ++i;
   }
-  res += "]}";
+  res += "]";
   i=0;
   for (auto *output : this->_binOutputs)
   {
     if (i == 0)
     {
-      mgos::JSONAppendStringf(&res, ",{outputs: [{name:%s,state:%B}", output->getName().c_str(),output->getState());
+      mgos::JSONAppendStringf(&res, ",outputs: [{name:%Q,state:%B}", output->getName().c_str(),output->getState());
     }
     else
     {
-      mgos::JSONAppendStringf(&res, ",{name:%s,state:%B}", output->getName().c_str(),output->getState());
+      mgos::JSONAppendStringf(&res, ",{name:%Q,state:%B}", output->getName().c_str(),output->getState());
     }
     ++i;
   }

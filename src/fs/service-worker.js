@@ -1,5 +1,5 @@
 var cacheName = 'smart-light-pwa';
-var filesToCache = ['/', 'index.html', 'js/app.js'];
+var filesToCache = ['/', 'index.html', 'app.js'];
 
 self.addEventListener('install', function(e) {
   e.waitUntil(caches.open(cacheName).then(function(cache) {

@@ -14,7 +14,7 @@ App.state = {
   connected: false,
   outputs: [],
   sensors: [],
-  frames: []
+  device: {state:{}}
 };
 
 App.Header = function (props) {
@@ -44,9 +44,7 @@ App.Footer = function (props) {
         h('i', { class: 'mr-0 fa-fw fa ' + icon, style: 'width: 2em;' }),
         h('div', { class: 'small' }, title)));
   };
-  var proto = App.settings.mdashURL.split(':')[0];
-  var base = proto + '://' + location.host + location.pathname;
-  var ibase = base.replace(/^https/, 'http');
+
   return h(
     'footer', {
     class: 'd-flex align-items-stretch border-top',
@@ -63,6 +61,9 @@ App.errorHandler = function (e) {
 
 App.setKey = function (obj, key, val) {
   var parts = key.split('.');
+  console.log(parts);
+  console.log(obj);
+  console.log(key);
   for (var i = 0; i < parts.length; i++) {
     if (i >= parts.length - 1) {
       obj[parts[i]] = val;
@@ -291,29 +292,32 @@ App.DeviceWidget = function (props) {
 
 
 App.PageSettings = function (props) {
-  var self = this;
+  const self = this;
   self.componentDidMount = function () {
     props.app.setState({ title: 'Settings' });
-    self.setState({changes:[]});
+    self.setState({ changes: { config: null } });
+    self.setState({ modifed: false });
   };
- 
-  const mkStringItem = function (label, k, dis, c, r) {
+
+  const mkStringItem = function (label, k, dis, c, path, dst) {
     return h(
       'div', { class: 'form-group row my-2' },
       h('label', { class: 'col-form-label col-4' }, label),
       h('div', { class: 'col-8' }, h('input', {
         type: 'text',
         // value: state.c[k] || r.config[k] || '',
-        value: App.getKey(c, k) || App.getKey(r, k) || '',
+        value: App.getKey(c, k),
         placeholder: App.getKey(c, k),
         disabled: dis,
         class: 'form-control',
         onInput: function (ev) {
-          App.setKey(c, k, ev.target.value);
+          App.setKey(dst, path, ev.target.value);
+          App.setKey(props.app.state, path, ev.target.value);
+          self.setState({ modifed: true });
         },
       })));
   };
-  const mkIntItem = function (label, k, dis, c, r) {
+  const mkIntItem = function (label, k, dis, c, path, dst) {
     return h(
       'div', { class: 'form-group row my-2' },
       h('label', { class: 'col-form-label col-4' }, label),
@@ -321,93 +325,125 @@ App.PageSettings = function (props) {
         type: 'number',
         step: 1,
         // value: state.c[k] || r.config[k] || '',
-        value: App.getKey(c, k) || App.getKey(r, k) || '',
+        value: App.getKey(c, k),
         placeholder: App.getKey(c, k),
         disabled: dis,
         class: 'form-control',
         onInput: function (ev) {
-          App.setKey(c, k, ev.target.value);
+          console.log(ev);
+          App.setKey(dst, path, parseInt(ev.target.value));
+          App.setKey(props.app.state, path, parseInt(ev.target.value));
+          self.setState({ modifed: true });
         },
       })));
   };
 
-  const mkFloatItem = function (label, k, dis, c, r) {
+  const mkFloatItem = function (label, k, dis, c, path, dst) {
     return h(
       'div', { class: 'form-group row my-2' },
       h('label', { class: 'col-form-label col-4' }, label),
       h('div', { class: 'col-8' }, h('input', {
         type: 'number',
         step: 0.1,
-        // value: state.c[k] || r.config[k] || '',
-        value: App.getKey(c, k) || App.getKey(r, k) || '',
+        value: App.getKey(c, k),
         placeholder: App.getKey(c, k),
         disabled: dis,
         class: 'form-control',
         onInput: function (ev) {
-          App.setKey(c, k, ev.target.value);
+          console.log(ev);
+
+          App.setKey(dst, path, parseFloat(ev.target.value));
+          App.setKey(props.app.state, path, parseFloat(ev.target.value));
+          self.setState({ modifed: true });
         },
       })));
   };
-  const mkBoolItem = function (label, k, dis, c, r) {
+  const mkBoolItem = function (label, k, dis, c, path, dst) {
     return h(
       'div', { class: 'form-group row my-2' },
       h('label', { class: 'col-form-label col-4' }, label),
       h('div', { class: 'col-8' }, h('input', {
         type: 'checkbox',
-        // value: state.c[k] || r.config[k] || '',
-        //value: App.getKey(c, k),
+        value: App.getKey(c, k),
         checked: c,
         disabled: dis,
         class: 'form-control',
-        onInput: function (ev) {
-          //self.setState({changes: {[k]:ev.target.value}});
-          self.setState({changes:[ ... self.state.changes,{[k]:!ev.target.checked}]});
-          
+        onChange: function (ev) {
+          App.setKey(dst, path, ev.target.checked);
+          App.setKey(props.app.state, path, ev.target.checked);
+          self.setState({ modifed: true });
+          console.log(dst);
+
         },
       })));
   };
-  const mkchap = function (label, c) {
+  const mkchap = function (label, c, p) {
     var items = Object.keys(c);
 
     return h(
       'div', { class: 'd-block  p-2' },
       h('h2', {}, label), items.map(function (k) {
-        var type = typeof c[k];
+        const par = p + '.' + k;
+        const type = typeof c[k];
         if (type === 'object') {
-          return mkchap(k, c[k]);
+          return mkchap(k, c[k], par);
         } else if (type === 'string') {
-          return mkStringItem(k, k, false, c, c)
+          return mkStringItem(k, k, false, c, par, self.state.changes)
         } else if (type === 'number') {
-          return mkIntItem(k, k, false, c[k], c)
+          return mkIntItem(k, k, false, c, par, self.state.changes)
         } else if (type === 'boolean') {
-          return mkBoolItem(k, k, false, c[k], c)
+          return mkBoolItem(k, k, false, c[k], par, self.state.changes)
         }
       }));
 
   }
 
- const saveBtn=function(config){
-  return h('button',{class:'btn btn-success float-right'},'Save');
- }
- const rstBtn=function(){
-  return h('button',{class:'btn btn-danger float-right',
-            onClick:(e)=>{
-              self.setState({changes:[]});
-            }},'Reset');
- }
+  const saveBtn = function (config) {
+    return h('button',
+      {
+        class: 'btn btn-success float-right',
+        disabled: !self.state.modifed,
+        onClick: () => {
+          if (self.state.modifed) {
+            props.app.rpc.call('Config.Set', self.state.changes, 50000)
+            .then(res => {
+              if (res.result) {
+                console.log(res.result);
+                props.app.rpc.call('Config.Save', {}, 50000).then(res => {
+                  console.log(res.result)
+                })
+                self.setState({ changes: { config: null } });
+                self.setState({ modifed: false });
+              }
+            }).catch(err => {
+              console.log(err);
+            })
+          };
+        }
+      }, 'Save');
+  }
+  const rstBtn = function () {
+    return h('button', {
+      class: 'btn btn-danger float-right',
+      onClick: (e) => {
+        self.setState({ changes: { config: null } });
+        self.setState({ modifed: false });
+      }
+    }, 'Reset');
+  }
 
   self.render = function (props, state) {
     var chapters = Object.keys(props.app.state.config);
     return h(
-      'div', { },
+      'div', {},
       h('div', { class: 'conf-page scroll items-align-stretch ' }, chapters ?
         chapters.map(function (k) {
 
-          return mkchap(k, props.app.state.config[k]);
+          return mkchap(k, props.app.state.config[k], 'config.' + k);
 
         }) : ''),
-        h('div',{class:'d-block w-100'},
-        h('div',{class:'d-block chng-box w-100'},JSON.stringify(self.state.changes)),
+      h('div', { class: 'd-block w-100' },
+        h('div', { class: 'd-block chng-box ' }, self.state.modifed ? JSON.stringify(self.state.changes) : ''),
         rstBtn(),
         saveBtn()));
   }
@@ -416,23 +452,31 @@ App.PageSettings = function (props) {
 App.Regulator = function (props) {
   let self = this;
   const app = props.app;
-  const obj = props.obj;
+  const obj = app.state.config[props.obj];
   self.componentDidMount = function () {
-    props.app.setState({ refresh: true });
+    self.setState({ changes: { config: {}} });
+    self.setState({ modifed: false });
   };
-  const mkSensSel = (app) => {
+  const mkSensSel = () => {
     const sens = app.state.sensors;
-    return h('select', { class: 'input-selector' },
+    return h('select', { class: 'input-selector',
+    onChange: (ev) => {
+      self.setState({changes:{config:{[obj]:{input:ev.target.value}}}});
+      App.setKey(app.state.config[obj], 'input', ev.target.value);
+      self.setState({ modifed: true });
+    } },
       sens.map((s) => {
         return h('option', {}, s.name)
       }));
   }
-  const mkOutSel = (app, obj) => {
+  const mkOutSel = () => {
     const outs = app.state.outputs;
     return h('select', {
       class: 'input-selector',
       onChange: (ev) => {
-        obj.input = ev.target.value;
+        App.setKey(self.state.changes.config[obj], 'output', ev.target.value);
+        App.setKey(app.state.config[obj], 'output', ev.target.value);
+        self.setState({ modifed: true });
       }
     },
       outs.map((o) => {
@@ -440,34 +484,79 @@ App.Regulator = function (props) {
       }));
 
   }
-  const mkVDisp = (app, sensor, label) => {
+  const mkFloatItem = function (label, k,c) {
+    return h(
+      'div', { class: 'form-group row ' },
+      h('label', { class: 'input-label' }, label),
+      h('div', { class: 'float-input' }, h('input', {
+        type: 'number',
+        step: 0.1,
+        value: App.getKey(c, k),
+        placeholder: App.getKey(c, k),
+        onInput: function (ev) {
+          App.setKey(self.state.changes.config[obj], k, parseFloat(ev.target.value));
+          App.setKey(app.state.config[obj], k, parseFloat(ev.target.value));
+          self.setState({ modifed: true });
+        },
+      })));
+  };
+  const mkVDisp = () => {
+
     return h('div', { class: 'd-block' },
-      h('small', { class: 'mr-2 my-auto text-muted' }, label),
-      h('div', { class: 'value-display' }, app.state.sensors.find((item) => { return item.name == sensor }).state + '°C'))
+      h('div', { class: 'value-display' }, app.state.device.state.sensors.find((item) => { return item.name == App.getKey(obj,'input') }).state + '°C'))
+  }
+  const saveBtn = function () {
+    return h('button',
+      {
+        class: 'btn btn-success float-right',
+        disabled: !self.state.modifed,
+        onClick: () => {
+          if (self.state.modifed) {
+            app.rpc.call('Config.Set', self.state.changes, 50000)
+            .then(res => {
+              if (res.result) {
+                console.log(res.result);
+                app.rpc.call('Config.Save', {}, 50000).then(res => {
+                  console.log(res.result)
+                })
+                self.setState({ changes: { config: null } });
+                self.setState({ modifed: false });
+                app.loadConfig();
+              }
+            }).catch(err => {
+              console.log(err);
+            })
+          };
+        }
+      }, 'Save');
   }
   return h('div', { class: 'regulator ' },
-  h('div', { class: 'head' },
-  h('div', {style:'font-size:22pt'}, App.getKey(obj, 'name')),
-  h('i', { class: 'fa fa-solid fa-power-off' }),
-  h('input',{
-    type:'checkbox',
-    style:'width: 24px'
-  },'enable'),
-  h('div', { class: 'indicator' }, 'ON')),
+    h('div', { class: 'head' },
+      h('div', { style: 'font-size:22pt' }, App.getKey(obj, 'name')),
+      h('i', { class: 'fa fa-solid fa-power-off' }),
+      h('input', {
+        type: 'checkbox',
+        style: 'width: 24px'
+      }, 'enable'),
+      h('div', { class: 'indicator' }, 'ON')),
+
+    !(app.state.loaded||app.state.device.state )? h('small', { class: 'text-muted mr-2 font-weight-light' }, 'Loading') :
     
-    !app.state.loaded ? h('small', { class: 'text-muted mr-2 font-weight-light' }, 'Loading') :
-    mkSensSel(app),
-    mkOutSel(app),
-    mkVDisp(app, obj.input, obj.input.name),
-    
-    h('button',{class:'btn-save'},'Save'))
+    mkSensSel(),
+    mkOutSel(),
+    mkVDisp(),
+    mkFloatItem('Setpoint °C', 'setpoint', obj),
+    mkFloatItem('Histeresis °C', 'hist', obj),
+    h('div', { class: 'd-block chng-box ' }, self.state.modifed ? JSON.stringify(self.state.changes) : ''),
+    saveBtn()
+    )
 }
 App.LightTimer = function (props) {
   let self = this;
   const app = props.app;
   const obj = props.obj;
   self.componentDidMount = function () {
-    props.app.setState({ refresh: true });
+    app.setState({ refresh: true });
   };
   var mkTimeItem = function (label, k, dis, c, r) {
     return h(
@@ -504,7 +593,7 @@ App.LightTimer = function (props) {
     h('h3', {}, App.getKey(obj, 'name')),
     h('i', { class: 'fa fa-solid fa-power-off' }),
     !app.state.loaded ? h('small', { class: 'text-muted mr-2 font-weight-light' }, 'Loading') :
-    mkOutSel(app),
+      mkOutSel(app),
     mkTimeItem('Start:', 'start', false, obj.start, obj.start),
     mkTimeItem('Stop:', 'stop', false, obj.stop, obj.stop),
     h('div', { class: 'indicator' }, 'ON'))
@@ -516,7 +605,6 @@ App.PageDashboard = function (props) {
     props.app.setState({ title: 'Dashboard' });
   };
 
-
   self.render = function (props, state) {
 
     return h(
@@ -524,10 +612,10 @@ App.PageDashboard = function (props) {
       h('div', { class: 'h-100 d-flex ' },
         h('div',
           { class: 'w-100 text-muted font-weight-light', style: 'scroll' }, !props.app.state.loaded ? h('h1', {}, 'Loading') :
-          h(App.Regulator, { app: props.app, obj: props.app.state.config.reg1 }),
-          h(App.Regulator, { app: props.app, obj: props.app.state.config.reg2 }),
-          h(App.Regulator, { app: props.app, obj: props.app.state.config.reg3 }),
-          h(App.LightTimer, { app: props.app, obj: props.app.state.config.light1 })
+          h(App.Regulator, { app: props.app, obj: 'reg1' }),
+          h(App.Regulator, { app: props.app, obj: 'reg2' }),
+          h(App.Regulator, { app: props.app, obj: 'reg3' }),
+          h(App.LightTimer, { app: props.app, obj: 'light1' })
         )));
   }
 };
@@ -708,6 +796,7 @@ App.Content = function (props) {
   },
     h(App.PageDashboard, { app: props.app, default: true }),
     h(App.PageSettings, { app: props.app, path: 'config' }));
+
 };
 
 App.Instance = function (props) {
@@ -715,53 +804,66 @@ App.Instance = function (props) {
   App.self = self;
 
   self.componentDidMount = function () {
-    
-    const loadSensors=function(){
+    const loadSensors = function () {
       return self.rpc.call('Get.Sensors', {}, 50000)
         .then(res => {
           self.setState({ sensors: res.result.sensors });
           console.log(res);
         });
     }
-    const loadConfig=function(){
+    const loadConfig = function () {
       return self.rpc.call('Config.Get', {}, 50000)
-      .then(res => {
-        self.setState({ config: res.result });
-        console.log(res);
-        //
-      })  
+        .then(res => {
+          self.setState({ config: res.result });
+          console.log(res);
+          //
+        })
     }
-    const loadOutputs = function(){
+    const loadOutputs = function () {
       return self.rpc.call('Get.Outputs', {}, 50000)
         .then(res => {
           self.setState({ outputs: res.result.outputs });
-          console.log(res);
-          self.setState({ loaded: true });
-      }).catch(err => {
-        console.log(err);
-      });
+        }).catch(err => {
+          console.log(err);
+        });
     }
+    
+  
+  
     // Setup JSON-RPC engine
     var rpc = mkrpc('ws://' + '192.168.2.160' + '/rpc');
     rpc.onopen = ev => {
       // When RPC is connected, fetch list of supported RPC services
       self.setState({ connected: true });
 
-      loadConfig().then(()=>loadSensors()).then(()=>loadOutputs()).finally(()=>{
-        self.setState({ loaded: true }); 
-        console.log('All data loaded')
+      loadConfig().then(() => loadSensors()).then(() => loadOutputs()).then(() => {
+        if (self.state.config) {
+          self.setState({ loaded: true });
+          console.log('All data loaded');
+        } else {
+          console.log('Some wents wrong');
+        }
+
       })
-
       
-
-
-
     };
     rpc.onclose = ev => self.setState({ connected: false });
     //rpc.onout = ev => logframe('-> ', ev);
-    //rpc.onin = ev => logframe('<- ', ev);
+    rpc.onin = ev => console.log('<- ', ev);
     self.rpc = rpc;
+    self.timer=setInterval(() => {
+      self.updateDeviceState();
+  }, 5000);
+  };
+  self.updateDeviceState=()=>{
 
+    if(self.state.loaded){self.rpc.call('Get.State', {}, 50000)
+        .then(res => {
+          self.setState({device:{state:res.result}});
+          console.log(res.result);
+        }).catch(err => {
+          console.log(err);
+        });}
   };
 
   self.logout = function () {
@@ -780,7 +882,7 @@ App.Instance = function (props) {
 
   self.render = function (props, state) {
     var p = { app: self };
-  if (!self.state.loaded) return h('div',{style:'font-size:30pt'},'Loading...');    // Show blank page when loading
+    if (!self.state.loaded) return h('div', { style: 'font-size:30pt' }, 'Loading...');    // Show blank page when loading
     //  if (!self.state.u) return h(App.Login, p);  // Show login unless logged
     return h(
       'div', {
@@ -801,6 +903,6 @@ window.onload = function () {
   preact.render(h(App.Instance), document.body);
 
   if ('serviceWorker' in navigator)  // for PWA
-    navigator.serviceWorker.register('js/service-worker.js')
+    navigator.serviceWorker.register('service-worker.js')
       .catch(function (err) { });
 };

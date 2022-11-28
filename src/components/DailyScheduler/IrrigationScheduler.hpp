@@ -38,7 +38,7 @@ void IrrigationScheduler::Update()
       off();
       break;
     }
-  }
+  }else off();
 }
 void IrrigationScheduler::calc()
 {

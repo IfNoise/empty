@@ -119,7 +119,7 @@ void Application::UpdateAll()
 
 std::string Application::printSensors()
 {
-  std::string res="";
+  std::string res = "";
   int i = 0;
   for (auto *sensor : this->_sensors)
   {
@@ -139,7 +139,7 @@ std::string Application::printSensors()
 }
 std::string Application::printOutputs()
 {
-  std::string res="";
+  std::string res = "";
   int i = 0;
   for (auto *output : this->_binOutputs)
   {
@@ -154,7 +154,7 @@ std::string Application::printOutputs()
     ++i;
   }
   res += "]}";
- 
+
   return res;
 }
 void Application::publishSensors()
@@ -174,6 +174,21 @@ void Application::publishSensors()
   else
   {
     LOG(LL_INFO, ("Sensors is not published,MQTT brocker connection is lost"));
+  }
+}
+void Application::publishState()
+{
+  if (mgos_mqtt_global_is_connected())
+  {
+    char buf[64];
+    sprintf(buf, "%s/state/", mgos_sys_config_get_device_id());
+    mgos_mqtt_pubf(buf, 0, false, "%s", this->printState().c_str());
+    mgos_msleep(100);
+    LOG(LL_INFO, ("State is published"));
+  }
+  else
+  {
+    LOG(LL_INFO, ("State is not published,MQTT brocker connection is lost"));
   }
 }
 void Application::publishBinOuts()
@@ -198,65 +213,67 @@ void Application::publishBinOuts()
 std::string Application::printState()
 {
   std::string res;
- int i = 0;
+  int i = 0;
   for (auto *sensor : this->_sensors)
   {
     if (i == 0)
     {
-      mgos::JSONAppendStringf(&res, "{sensors: [{name:%Q,state:%.2f}", sensor->getName().c_str(),sensor->getState());
+      mgos::JSONAppendStringf(&res, "{sensors: [{name:%Q,state:%.2f}", sensor->getName().c_str(), sensor->getState());
     }
     else
     {
-      mgos::JSONAppendStringf(&res, ",{name:%Q,state:%.2f}", sensor->getName().c_str(),sensor->getState());
+      mgos::JSONAppendStringf(&res, ",{name:%Q,state:%.2f}", sensor->getName().c_str(), sensor->getState());
     }
     ++i;
   }
   res += "]";
-  i=0;
+  i = 0;
   for (auto *output : this->_binOutputs)
   {
     if (i == 0)
     {
-      mgos::JSONAppendStringf(&res, ",outputs: [{name:%Q,state:%B}", output->getName().c_str(),output->getState());
+      mgos::JSONAppendStringf(&res, ",outputs: [{name:%Q,state:%B}", output->getName().c_str(), output->getState());
     }
     else
     {
-      mgos::JSONAppendStringf(&res, ",{name:%Q,state:%B}", output->getName().c_str(),output->getState());
+      mgos::JSONAppendStringf(&res, ",{name:%Q,state:%B}", output->getName().c_str(), output->getState());
     }
     ++i;
   }
   res += "]}";
   return res;
 }
+
 void Application::publishAll()
 {
-  publishSensors();
-  publishBinOuts();
-  //publishState();
-  //saveSensorsToFile();
-  //printSensors();
+  //publishSensors();
+  //publishBinOuts();
+  // publishState();
+  // saveSensorsToFile();
+  // printSensors();
 }
 void Application::saveSensorsToFile()
 {
- char templ[1024]="{\"sensors\":[{\"name\":\" \",\"state\":0}]}";
- char *temp=templ;
-  //FILE *fp = fopen("sensors.json", "w");
+  char templ[1024] = "{\"sensors\":[{\"name\":\" \",\"state\":0}]}";
+  char *temp = templ;
+  // FILE *fp = fopen("sensors.json", "w");
   char buf[1024];
-  char *p=buf;
-  int i=0;
-  struct json_out output = JSON_OUT_BUF(p,1024);
-  for (auto *sensor : this->_sensors){
+  char *p = buf;
+  int i = 0;
+  struct json_out output = JSON_OUT_BUF(p, 1024);
+  for (auto *sensor : this->_sensors)
+  {
     char path[32];
-    sprintf(path,".sensors[%d]",i);
-    json_setf(temp,strlen(temp),&output,path,"%s",sensor->getInfo().c_str());
-    strncpy(temp,buf,strlen(buf));
-    //json_prettify(buf,1024,&output);
-    
-    //LOG(LL_INFO, ("%s \n \n",temp.c_str())); 
+    sprintf(path, ".sensors[%d]", i);
+    json_setf(temp, strlen(temp), &output, path, "%s", sensor->getInfo().c_str());
+    strncpy(temp, buf, strlen(buf));
+    // json_prettify(buf,1024,&output);
+
+    // LOG(LL_INFO, ("%s \n \n",temp.c_str()));
     ++i;
   }
-  LOG(LL_INFO, ("%s",p));
-  //fclose(fp);
+  LOG(LL_INFO, ("%s", p));
+  // fclose(fp);
 }
 
 extern Application App;

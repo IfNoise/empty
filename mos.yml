@@ -19,7 +19,7 @@ filesystem:
   - src/fs
 
 config_schema:
-  - ["mqtt.enable", false]  
+  - ["mqtt.enable", true]  
   - ["mqtt.server", "192.168.2.22:1883"]
   - ["mqtt.user", "noise83"]
   - ["mqtt.pass", "neuro83"]
@@ -33,7 +33,7 @@ config_schema:
  # - ["dash.enable",true]
  # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
   - ["i2c.enable", true]
-  - ["debug.level", 3]
+  - ["debug.level", 2]
     #=================================================================================================
   - ["dtcomp", "o", {title: "Dallas Temperature Component Settings"}]
   - ["dtcomp.port", "i", 13, {title: "One Wire gpio port number"}]

@@ -44,7 +44,7 @@ static InternalOut *FanSpeed{nullptr};
 static InternalOut *Light{nullptr};
 static InternalOut *Pump{nullptr};
 //=======================================Timers===============================================
-//Timer *SensorPrintT{nullptr};
+Timer *SensorPrintT{nullptr};
 
 //================================RPC service methods=========================================
 static void getState(struct mg_rpc_request_info *ri, void *cb_arg,struct mg_rpc_frame_info *fi, struct mg_str args)
@@ -120,7 +120,7 @@ mg_rpc_add_handler(mgos_rpc_get_global(), "Get.Outputs", NULL, getOutputs, NULL)
 
 
   //========================================Creating Timers===================================
-  //SensorPrintT = new Timer(5000, MGOS_TIMER_REPEAT,std::bind(&Application::publishAll,&App));
+  SensorPrintT = new Timer(5000, MGOS_TIMER_REPEAT,std::bind(&Application::publishState,&App));
 }
 //============================================================================================
 extern "C" enum mgos_app_init_result mgos_app_init(void)

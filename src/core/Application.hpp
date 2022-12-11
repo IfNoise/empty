@@ -214,6 +214,8 @@ std::string Application::printState()
 {
   std::string res;
   int i = 0;
+  time_t now = 3600 * 3 + time(0);
+    tm *tm_info = gmtime(&now);
   for (auto *sensor : this->_sensors)
   {
     if (i == 0)
@@ -240,7 +242,9 @@ std::string Application::printState()
     }
     ++i;
   }
-  res += "]}";
+  res += "],";
+  mgos::JSONAppendStringf(&res,"timestamp: %d",(unsigned int)now);
+  res+="}";
   return res;
 }
 

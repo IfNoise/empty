@@ -31,7 +31,8 @@ App.Footer = function (props) {
       'a', {
       href: href,
       class: 'text-center ' + (active ? 'font-weight-bold text-primary' : 'text-dark'),
-      style: 'flex:1;height:3em;text-decoration:none;' + 'border-top: 3px solid ' + (active ? '#007bff' : 'transparent')},
+      style: 'flex:1;height:3em;text-decoration:none;' + 'border-top: 3px solid ' + (active ? '#007bff' : 'transparent')
+    },
       h('div', { class: '', style: 'line-height: 1.4em' },
         h('i', { class: 'mr-0 fa-fw fa ' + icon, style: 'width: 2em;' }),
         h('div', { class: 'small' }, title)));
@@ -42,9 +43,9 @@ App.Footer = function (props) {
     class: 'd-flex align-items-stretch border-top',
     style: 'flex-shrink: 0;'
   },
-    mkTabButton('Dashboard',  'fa-server',  App.PageDashboard,   '#/'),
-    mkTabButton('Settings',   'fa-gear',    App.PageSettings,    '#/config'),
-    mkTabButton('Files',      'fa-folder',  App.PageDeviceFiles, '#/files'));
+    mkTabButton('Dashboard', 'fa-server', App.PageDashboard, '#/'),
+    mkTabButton('Settings', 'fa-gear', App.PageSettings, '#/config'),
+    mkTabButton('Files', 'fa-folder', App.PageDeviceFiles, '#/files'));
 };
 
 App.errorHandler = function (e) {
@@ -382,11 +383,15 @@ App.Regulator = function (props) {
 App.LightTimer = function (props) {
   let self = this;
   const app = props.app;
-  const obj = props.obj;
+  const obj = app.state.config[props.obj];
   self.componentDidMount = function () {
-    app.setState({ refresh: true });
+    self.setState({ changes: { config: {} } });
+    self.setState({ modifed: false });
+    console.log('Regulator mounted')
+    console.log(obj)
+
   };
-  var mkTimeItem = function (label, k, dis, c) {
+  var mkTimeItem = function (label, k, c) {
     return h(
       'div', { class: 'form-group row my-2' },
       h('label', { class: 'col-form-label col-4' }, label),
@@ -396,25 +401,143 @@ App.LightTimer = function (props) {
         // value: state.c[k] || r.config[k] || '',
         value: App.getKey(c, k),
         placeholder: App.getKey(c, k),
-        disabled: dis,
         class: 'time-input',
         onInput: function (ev) {
           const hm = ev.target.value.split(':')
           const hours = hm[0];
           const minute = hm[1];
           const int = hours * 60 + minute;
+          self.setState({ changes: { config: { [props.obj]: { [k]: parseFloat(ev.target.value) } } } });
           App.setKey(c, k, int);
-          console.log(c)
+          self.setState({ modifed: true });
 
         },
       })))
   }
-  const mkOutSel = (app, obj) => {
+  const mkOutSel = () => {
     const outs = app.state.outputs;
     return h('select', {
-      class: 'input-selector',
+      class: 'output-selector col',
+      value: App.getKey(obj, 'output'),
       onChange: (ev) => {
-        obj.input = ev.target.value;
+        self.setState({ changes: { config: { [props.obj]: { output: ev.target.value } } } });
+        App.setKey(obj, 'output', ev.target.value);
+        self.setState({ modifed: true });
+      }
+    },
+      outs.map((o) => {
+        return h('option', {}, o.name)
+      }));
+
+  }
+  return h('div', { class: 'regulator ' },
+    h('h3', {}, App.getKey(obj, 'name')),
+    !app.state.loaded ? h('small', { class: 'text-muted mr-2 font-weight-light' }, 'Loading') :
+      mkOutSel(app),
+    mkTimeItem('Start:', 'start', false, obj),
+    mkTimeItem('Stop:', 'stop', false, obj))
+};
+App.IrrigationTimer = function (props) {
+  let self = this;
+  const app = props.app;
+  const obj = app.state.config[props.obj];
+  self.componentDidMount = function () {
+    self.setState({ changes: { config: {} } });
+    self.setState({ modifed: false });
+
+  };
+  const mkIntItem = function (label, k, c, ind) {
+    return h(
+      'div', { class: 'form-group row dash-input ' },
+      h('label', { class: 'input-label col' }, label),
+      h('input', {
+        type: 'number',
+        class: 'float-input col',
+        step: 1,
+        value: App.getKey(c, k)/ind,
+        //placeholder: App.getKey(c, k),
+        onInput: function (ev) {
+          //App.setKey(self.state.changes.config[props.obj], k, parseFloat(ev.target.value));
+          self.setState({ changes: { config: { [props.obj]: { [k]: (parseInt(ev.target.value)*ind) } } } });
+          App.setKey(c, k, (parseInt(ev.target.value)*ind));
+          App.setKey(props.app.state, k, (parseInt(ev.target.value)*ind));
+          self.setState({ modifed: true });
+        },
+      }));
+  };
+  var mkTimeItem = function (label, k, c) {
+    return h(
+      'div', { class: 'form-group row my-2' },
+      h('label', { class: 'col-form-label col-4' }, label),
+      h('div', { class: 'col-8' }, h('input', {
+        type: 'time',
+        step: 60,
+        // value: state.c[k] || r.config[k] || '',
+        value: App.getKey(c, k),
+        placeholder: App.getKey(c, k),
+        class: 'time-input',
+        onInput: function (ev) {
+          const hm = ev.target.value.split(':')
+          const hours = hm[0];
+          const minute = hm[1];
+          const int = hours * 60 + minute;
+          self.setState({ changes: { config: { [props.obj]: { [k]: int } } } });
+          App.setKey(c, k, int);
+          self.setState({ modifed: true });
+
+        },
+      })))
+  }
+  const indicator = function () {
+    const state = app.state.device.state.outputs.find((item) => { return item.name === App.getKey(obj, 'output') }).state;
+    return h('i', { class: 'fa fa-solid indicator fa-power-off ', style: 'color:' + (state ? 'lime' : 'grey') })
+  }
+
+  const saveBtn = function () {
+    return h('button',
+      {
+        class: 'btn btn-success m-1 col-4',
+        disabled: !self.state.modifed,
+        onClick: () => {
+          if (self.state.modifed) {
+            app.rpc.call('Config.Set', self.state.changes, 50000)
+              .then(res => {
+                if (res.result) {
+                  console.log(res.result);
+                  app.rpc.call('Config.Save', {}, 50000).then(res => {
+                    console.log(res.result)
+                  })
+                  self.setState({ changes: { config: {} } });
+                  self.setState({ modifed: false });
+                  app.loadConfig();
+                }
+              }).catch(err => {
+                console.log(err);
+              })
+          };
+        }
+      }, 'Save');
+  }
+  const rstBtn = function () {
+    return h('button', {
+      class: 'btn btn-danger m-1 col-4',
+      disabled: !self.state.modifed,
+      onClick: (e) => {
+        self.setState({ changes: { config: null } });
+        self.setState({ modifed: false });
+      }
+    }, 'Reset');
+  }
+
+  const mkOutSel = () => {
+    const outs = app.state.outputs;
+    return h('select', {
+      class: 'output-selector col',
+      value: App.getKey(obj, 'output'),
+      onChange: (ev) => {
+        self.setState({ changes: { config: { [props.obj]: { output: ev.target.value } } } });
+        App.setKey(obj, 'output', ev.target.value);
+        self.setState({ modifed: true });
       }
     },
       outs.map((o) => {
@@ -423,16 +546,21 @@ App.LightTimer = function (props) {
 
   }
 
-  return h('div', { class: 'light-timer ' },
-    h('h3', {}, App.getKey(obj, 'name')),
-    h('i', { class: 'fa fa-solid fa-power-off' }),
+  return h('div', { class: 'regulator' },
+
     !app.state.loaded ? h('small', { class: 'text-muted mr-2 font-weight-light' }, 'Loading') :
-      mkOutSel(app),
+      h('div', { class: 'head row' },
+        h('div', { style: 'font-size: 18pt' }, App.getKey(obj, 'name')),
+        indicator()),
+    mkOutSel(app),
     mkTimeItem('Start:', 'start', false, obj),
     mkTimeItem('Stop:', 'stop', false, obj),
-    h('div', { class: 'indicator' }, 'ON'))
+    mkIntItem('Number of Irr', 'num', obj,1),
+    mkIntItem('Irr. window', 'win', obj,60),
+    h('code', { class: ' chng-box ' }, self.state.modifed ? JSON.stringify(self.state.changes) : ''),
+    h('div', { class: 'row ' }, saveBtn(), rstBtn())
+  )
 }
-
 App.PageDashboard = function (props) {
   const self = this;
   self.componentDidMount = function () {
@@ -446,7 +574,8 @@ App.PageDashboard = function (props) {
       h(App.Regulator, { app: props.app, obj: 'reg1' }),
       h(App.Regulator, { app: props.app, obj: 'reg2' }),
       h(App.Regulator, { app: props.app, obj: 'reg3' }),
-      h(App.LightTimer, { app: props.app, obj: 'light1' })
+      h(App.LightTimer, { app: props.app, obj: 'light1' }),
+      h(App.IrrigationTimer, { app: props.app, obj: 'irr1' })
     );
   }
 };
@@ -463,10 +592,10 @@ App.PageDeviceFiles = function (props) {
     console.log(self.state.files)
     return res.result;
   }
-  self.openFile=async function (file){
-    const res=await props.app.rpc.call('FS.Get', {filename:file}, 60000);
+  self.openFile = async function (file) {
+    const res = await props.app.rpc.call('FS.Get', { filename: file }, 60000);
     const win = window.open('about:blank', '_blank');
-    let text=atob(res.result.data);
+    let text = atob(res.result.data);
     win.document.write(text);
     win.focus();
   }
@@ -477,21 +606,23 @@ App.PageDeviceFiles = function (props) {
   };
   const mkFileItem = (f) => {
     return h('tr',
-     { class: '' ,
-       onDblClick:(ev)=>{
-        self.openFile(f.name);
-       }},
-      h('td',{},h('i', { class: 'col-sm fa fa-file' })),
-      h('td',{} ,f.name),
-      h('td',{} ,f.size))
+      {
+        class: '',
+        onDblClick: (ev) => {
+          self.openFile(f.name);
+        }
+      },
+      h('td', {}, h('i', { class: 'col-sm fa fa-file' })),
+      h('td', {}, f.name),
+      h('td', {}, f.size))
   }
   self.render = (props, state) => h('div',
     { class: 'w-100 text-muted font-weight-light', style: 'scroll' }, !self.state.loaded ? h('h1', {}, 'Loading') :
     //h('i', { class: 'fa fa-folder' }), h('label', { class: 'p-0' }, 'Device Files'),
-    h('table', { class: 'table table-hover' }, 
-    //h('thead',{class:'thead-dark'},h('tr',{},h('th',{scope:'col'},' '),h('th',{scope:'col'},'name'),h('th',{scope:'col'},'size'))),
-    h('tbody',{},
-    self.state.files.map(file => mkFileItem(file))))
+    h('table', { class: 'table table-hover' },
+      //h('thead',{class:'thead-dark'},h('tr',{},h('th',{scope:'col'},' '),h('th',{scope:'col'},'name'),h('th',{scope:'col'},'size'))),
+      h('tbody', {},
+        self.state.files.map(file => mkFileItem(file))))
   );
 };
 

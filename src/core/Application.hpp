@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.hpp"
 #include "Sensor.hpp"
+#include "Input.hpp"
 #include "Output.hpp"
 #include "mgos.hpp"
 #include "mgos_mqtt.h"
@@ -14,16 +15,28 @@ private:
   std::vector<Sensor *> _sensors{};
   std::vector<BinaryOutput *> _binOutputs{};
   std::vector<FloatOutput *> _floatOutputs{};
+  std::vector<BinaryInput *> _binInputs{};
+  std::vector<FloatInput *> _floatInputs{};
 
 public:
+
+  //Registring Objects in application
   Status registerComponent(Component *component);
   Status registerSensor(Sensor *sensor);
   Status registerBinOutput(BinaryOutput *output);
   Status registerFloatOutput(FloatOutput *output);
+  Status registerBinInput(BinaryInput *output);
+  Status registerFloatInput(FloatInput *output);
+
+  // Getting pointer to Object 
   Sensor *getSensorByName(const std::string name);
   BinaryOutput *getBinOutputByName(const std::string name);
   FloatOutput *getFloatOutputByName(const std::string name);
+  BinaryInput *getBinInputByName(const std::string name);
+  FloatInput *getFloatInputByName(const std::string name);
   Component *getComponentByName(const std::string);
+
+  //========================================
   Status InitAll();
   void UpdateAll();
   std::string printSensors();
@@ -53,9 +66,22 @@ Status Application::registerBinOutput(BinaryOutput *output)
   _binOutputs.push_back(output);
   return Status::OK();
 }
+
 Status Application::registerFloatOutput(FloatOutput *output)
 {
   _floatOutputs.push_back(output);
+  return Status::OK();
+}
+
+Status Application::registerBinInput(BinaryInput *input)
+{
+  _binInputs.push_back(input);
+  return Status::OK();
+}
+
+Status Application::registerFloatInput(FloatInput *input)
+{
+  _floatInputs.push_back(input);
   return Status::OK();
 }
 
@@ -88,6 +114,27 @@ FloatOutput *Application::getFloatOutputByName(const std::string name)
   }
   return nullptr;
 }
+
+BinaryInput *Application::getBinInputByName(const std::string name)
+{
+  for (auto *ptr : this->_binInputs)
+  {
+    if (ptr->getName() == name)
+      return ptr;
+  }
+  return nullptr;
+}
+
+FloatInput *Application::getFloatInputByName(const std::string name)
+{
+  for (auto *ptr : this->_floatInputs)
+  {
+    if (ptr->getName() == name)
+      return ptr;
+  }
+  return nullptr;
+}
+
 Component *Application::getComponentByName(const std::string name)
 {
   for (auto *ptr : this->_components)
@@ -200,7 +247,7 @@ void Application::publishBinOuts()
 
       char buf[64];
       sprintf(buf, "%s/state/outputs/%s", mgos_sys_config_get_device_id(), output->getName().c_str());
-      mgos_mqtt_pubf(buf, 0, false, "%B", output->getState());
+      mgos_mqtt_pubf(buf, 0, false, "%d", int(output->getState()));
       mgos_msleep(100);
     }
     LOG(LL_INFO, ("Binary Outputs states is published"));
@@ -250,8 +297,8 @@ std::string Application::printState()
 
 void Application::publishAll()
 {
-  //publishSensors();
-  //publishBinOuts();
+  publishSensors();
+  publishBinOuts();
   // publishState();
   // saveSensorsToFile();
   // printSensors();

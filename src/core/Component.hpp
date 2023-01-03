@@ -15,7 +15,6 @@ public:
   virtual Status deInit()=0;
   //virtual std::string getInfo()=0;
   Component(const Component &other) = delete;
-  ~Component();
   std::string getName(){return _name;}
 protected:
   const std::string _name{""};

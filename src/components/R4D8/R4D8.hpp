@@ -3,6 +3,7 @@
 #include "core/Component.hpp"
 #include "core/Output.hpp"
 #include "mgos.hpp"
+#include "mgos_modbus.h"
 #include "mgos_config.h"
 #include <vector>
 #include "core/Application.hpp"
@@ -38,7 +39,7 @@ R4D8Out::~R4D8Out()
 {
 }
 
-R4D8Comp::R4D8Comp(mgos_config_r4d8comp *cfg)
+R4D8Comp::R4D8Comp(mgos_config_r4d8comp *cfg):Component("R4D8Relay")
 {
 }
 

@@ -10,9 +10,9 @@ struct SchedulerItem // On Off interval seconds after midnight
     unsigned int start;
     unsigned int stop;
 };
-const static int MANUAL_OFF=0;
-const static int MANUAL_ON=1;
-const static int AUTO=2;
+const static int MANUAL_OFF = 0;
+const static int MANUAL_ON = 1;
+const static int AUTO = 2;
 
 //+++Base class on off scheduler
 class Scheduler : public PollingComponent
@@ -20,11 +20,12 @@ class Scheduler : public PollingComponent
 
 public:
     typedef std::function<void()> Callback;
-    Scheduler(std::string name,std::string output );
+    Scheduler(std::string name, std::string output);
     Status Init() override;
     void check();
     inline void setOnCallback(Callback f) { _onCallback = f; }
     inline void setOffCallback(Callback f) { _offCallback = f; }
+    void printItems();
 
 protected:
     Status saveItems();
@@ -38,14 +39,13 @@ protected:
     BinaryOutput *_out{nullptr};
 };
 
-Scheduler::Scheduler(std::string name,std::string output ) : PollingComponent(name, 10000),_output(output)
+Scheduler::Scheduler(std::string name, std::string output) : PollingComponent(name, 10000), _output(output)
 {
-
 }
 
 Status Scheduler::Init()
 {
-     _out=App.getBinOutputByName(_output);
+    _out = App.getBinOutputByName(_output);
     return Status::OK();
 }
 
@@ -56,33 +56,38 @@ void Scheduler::check()
     // LOG(LL_INFO, (" %s checking,now %d:%d:%d", _name.c_str(),tm_info->tm_hour,tm_info->tm_min,tm_info->tm_sec));
     unsigned int cursec = tm_info->tm_sec + tm_info->tm_min * 60 + tm_info->tm_hour * 3600;
     // LOG(LL_INFO, (" %s checking,cursec =%d c.", _name.c_str(),cursec));
+    bool curState = _out->getState();
     bool state{false};
     for (SchedulerItem item : _items)
     {
-        LOG(LL_INFO, (" Item start=%d stop=%d",item.start,item.stop));
         state = item.start > item.stop ? ((cursec >= item.start) || (cursec < item.stop)) : ((cursec >= item.start) && (cursec < item.stop));
         if (state)
+        {
+            LOG(LL_INFO, (" Item start=%d stop=%d", item.start, item.stop));
             break;
+        }
     }
-    if (state)
-       { 
-        on();
-       LOG(LL_INFO, (" Item is on"));
-       }
-    else
+    if (state != curState)
+    {
+        if (state)
+        {
+            on();
+            LOG(LL_INFO, (" Item is on"));
+        }
+        else
         {
             off();
-         LOG(LL_INFO, (" Item is off"));
+            LOG(LL_INFO, (" Item is off"));
         }
-        
+    }
 }
 
 void Scheduler::on()
-{    
+{
     if (_out != nullptr)
-    { 
+    {
         _out->setState(true);
-        LOG(LL_INFO, (" setState called"));
+        LOG(LL_INFO, (" setState called ON"));
     }
     if (_onCallback != nullptr)
     {
@@ -95,6 +100,7 @@ void Scheduler::off()
     if (_out != nullptr)
     {
         _out->setState(false);
+        LOG(LL_INFO, (" setState called OFF"));
     }
     if (_offCallback != nullptr)
     {
@@ -132,6 +138,25 @@ Status Scheduler::loadItems()
         return Status(STATUS_DATA_LOSS, "Items not loaded");
     }
 }
+void Scheduler::printItems()
+{
+    std::string items;
+    int i = 0;
+    for (SchedulerItem item : _items)
+    {
+        if (i == 0)
+        {
+            mgos::JSONAppendStringf(&items, "[{start : %d,stop : %d}", item.start, item.stop);
+        }
+        else if (i > 0)
+        {
+            mgos::JSONAppendStringf(&items, ",{start : %d,stop : %d}", item.start, item.stop);
+        }
+        ++i;
+    }
+    items += "]";
+    LOG(LL_INFO, ("Items of %s : %s", _name.c_str(), items.c_str()));
+}
 Status Scheduler::saveItems()
 {
     char fnameBuf[32];
@@ -151,6 +176,7 @@ Status Scheduler::saveItems()
         ++i;
     }
     items += "]";
+
     if (json_fprintf(fnameBuf, "{ items : %Q }", items.c_str()) > 0)
     {
         return Status::OK();

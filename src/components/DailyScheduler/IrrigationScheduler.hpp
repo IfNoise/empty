@@ -16,6 +16,8 @@ IrrigationScheduler::IrrigationScheduler(mgos_config_irr * cfg) :
 Scheduler(cfg->name, cfg->output),
 _cfg(cfg)
 {
+  calc();
+  printItems();
 }
 
 void IrrigationScheduler::Update()

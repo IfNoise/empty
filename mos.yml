@@ -29,15 +29,30 @@ config_schema:
   - ["wifi.sta.enable",true]
   - ["wifi.sta.ssid", "if_noise"]
   - ["wifi.sta.pass", "00000006"]
- # - ["debug.stderr_topic", "debug/stderr"]
+  - ["debug.stderr_topic", "debug/stderr"]
  # - ["dash.enable",true]
  # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
   - ["i2c.enable", true]
   - ["debug.level", 2]
+  #==================================================================================================
+  - ["modbus.enable", false]
+  - ["modbus.timeout", 2000]
+  - ["modbus.uart_no", 1]
+  - ["modbus.uart_tx_pin", 26]
+  - ["modbus.uart_rx_pin", 25]
+  - ["modbus.tx_en_enable", false]
+  - ["modbus.baudrate", 9600]
+  - ["modbus.parity", 0]
+  - ["modbus.stop_bits", 1]
     #=================================================================================================
   - ["dtcomp", "o", {title: "Dallas Temperature Component Settings"}]
   - ["dtcomp.port", "i", 13, {title: "One Wire gpio port number"}]
   - ["dtcomp.saved", "b", false, {title: "true if sansors saved at fs"}]
+    #=================================================================================================
+  - ["pcfcomp", "o", {title: "PCF857x Expander Settings"}]
+  - ["pcfcomp.name", "s", "", {title: "PCF857x Expander Output Name"}]
+  - ["pcfcomp.address", "i", 0, {title: "i2c addres"}]
+  - ["pcfcomp.type", "i", 0, {title: "Type of GPIO input- 1,output-0"}]
     #=================================================================================================
   - ["r4d8comp", "o", {title: "R4D8 Modbus Relay Module Settings"}]
   - ["r4d8comp.address", "i", 0, {title: "Output Pin"}]
@@ -51,6 +66,18 @@ config_schema:
   - ["intout.name", "s", "", {title: "Output Name"}]
   - ["intout.pin", "i", 0, {title: "Output Pin"}]
   - ["intout.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
+      #=================================================================================================
+  - ["pcfout", "o", {title: "PCF857x Output Settings", abstract: true}]
+  - ["pcfout.prnt", "s", "", {title: "Parent PCF857x Expander Name"}]
+  - ["pcfout.name", "s", "", {title: "Output Name"}]
+  - ["pcfout.pin", "i", 0, {title: "Output Pin"}]
+  - ["pcfout.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
+  #=================================================================================================
+  - ["pcfin", "o", {title: "PCF857x Input Settings", abstract: true}]
+  - ["pcfin.prnt", "s", "", {title: "Parent PCF857x Expander Name"}]
+  - ["pcfin.name", "s", "", {title: "Input Name"}]
+  - ["pcfin.pin", "i", 0, {title: "Input Pin"}]
+  - ["pcfin.inverted", "b", false, {title: "Invert input"}]
   #==================================================================================================
   - ["reg", "o", {title: "Regulator Settings", abstract: true}]
   - ["reg.name", "s", "", {title: "Output Name"}]
@@ -103,12 +130,12 @@ config_schema:
 #====================================================================================================
   - ["intout4","intout", {title: "Ligth Output "}]
   - ["intout4.name","Light"]
-  - ["intout4.pin",25]
+  - ["intout4.pin",16]
   - ["intout4.inverted",false]
 #====================================================================================================
   - ["intout5","intout", {title: "Irrigation Pump Output "}]
   - ["intout5.name","Pump"]
-  - ["intout5.pin",26]
+  - ["intout5.pin",17]
   - ["intout5.inverted",false]
 #=====================================================================================================
   - ["reg1", "reg",{title: "Reg 1 Settings"}]
@@ -144,12 +171,12 @@ config_schema:
   - ["irr1", "irr", {title: "Irrigation Scheduler Settings"}]
   - ["irr1.name", "Irrigator"]
   - ["irr1.enable",true]
-  - ["irr1.mode", 0]
+  - ["irr1.mode", 2]
   - ["irr1.output", "Pump"]
   - ["irr1.start",72000]
   - ["irr1.stop", 28800]
-  - ["irr1.num", 0]
-  - ["irr1.win", 0]
+  - ["irr1.num", 12]
+  - ["irr1.win", 4]
 
 #====================================================================================================
   - ["light1", "light", {title: "Light Timer Settings"}]
@@ -176,7 +203,8 @@ libs:
   - origin: https://github.com/mongoose-os-libs/bme280
   - origin: https://github.com/mongoose-os-libs/wifi
   - origin: https://github.com/mongoose-os-libs/sntp
- # - origin: https://github.com/mongoose-os-libs/modbus
+  - origin: https://github.com/mongoose-os-libs/pcf857x-i2c
+  - origin: https://github.com/mongoose-os-libs/modbus
 #  - origin: https://github.com/mongoose-os-libs/wifi-setup-web-ui
 
 # Used by the mos tool to catch mos binaries incompatible with this file format

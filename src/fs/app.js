@@ -480,7 +480,7 @@ App.IrrigationTimer = function (props) {
           const hm = ev.target.value.split(':')
           const hours = hm[0];
           const minute = hm[1];
-          const int = hours * 60 + minute;
+          const int = hours * 3600 + minute*60;
           self.setState({ changes: { config: { [props.obj]: { [k]: int } } } });
           App.setKey(c, k, int);
           self.setState({ modifed: true });

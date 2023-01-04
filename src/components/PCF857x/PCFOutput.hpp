@@ -11,6 +11,7 @@ class PCFOut:public BinaryOutput
 {
 private:
   mgos_config_pcfout *_cfg;
+  PCFComp *_parent{nullptr};
 public:
   PCFOut(mgos_config_pcfout *cfg);
   Status setState(bool state) override; 
@@ -20,19 +21,23 @@ public:
 
 PCFOut::PCFOut(mgos_config_pcfout *cfg):BinaryOutput(std::string(cfg->name)),_cfg(cfg)
 {
+  _parent=static_cast<PCFComp *>(App.getComponentByName(std::string(_cfg->prnt)));///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  if(_parent!=nullptr)LOG(LL_INFO, ("Parent set %s",_cfg->prnt));
+  else LOG(LL_ERROR, ("Parent object not found or wrong"));
 }
 
 Status PCFOut::setState(bool state)
 {
-  return Status();
+  _parent->Write(_cfg->pin,(state^(_cfg->inverted)));
+  return Status::OK();
 }
 
 bool PCFOut::getState()
 {
-  return false;
+  return _parent->Read(_cfg->pin)^_cfg->inverted;
 }
 
 std::string PCFOut::getInfo()
 {
-  return std::string();
+  return mgos::JSONPrintStringf("{name:%Q,type:%Q,pin: %d}",_name.c_str(),"PCF",_cfg->pin);
 }

@@ -6,22 +6,22 @@
 #include <vector>
 #include "core/Application.hpp"
 
-class PCFComp:public Component
+class PCFComp : public Component
 {
 private:
   mgos_pcf857x *_PCF{nullptr};
   mgos_config_pcfcomp *_cfg;
-public:
-  PCFComp( mgos_config_pcfcomp *cfg);
-  Status Init()override;
-  void Update()override;
-  Status deInit()override;
-  bool Read(int pin);
-  void Write(int pin,bool state);
 
+public:
+  PCFComp(mgos_config_pcfcomp *cfg);
+  Status Init() override;
+  void Update() override;
+  Status deInit() override;
+  bool Read(int pin);
+  void Write(int pin, bool state);
 };
 
-PCFComp::PCFComp(mgos_config_pcfcomp *cfg):Component(std::string(cfg->name)),_cfg(cfg)
+PCFComp::PCFComp(mgos_config_pcfcomp *cfg) : Component(std::string(cfg->name)), _cfg(cfg)
 {
 }
 
@@ -31,22 +31,29 @@ PCFComp::PCFComp(mgos_config_pcfcomp *cfg):Component(std::string(cfg->name)),_cf
 
 Status PCFComp::Init(/* args */)
 {
-  if (!(_PCF = mgos_pcf8574_create(mgos_i2c_get_global(),_cfg->address,
-                                mgos_sys_config_get_pcf857x_int_gpio()))) {
+  if (!(_PCF = mgos_pcf8574_create(mgos_i2c_get_global(), _cfg->address,
+                                   mgos_sys_config_get_pcf857x_int_gpio())))
+  {
     LOG(LL_ERROR, ("Could not create PCF857X"));
     return Status::CANCELLED();
-  }else  LOG(LL_INFO, ("PCF857X Component %s created ",_name));
-  int type=_cfg->type;
-  for(int i=0;i<8;i++){
-    mgos_pcf857x_gpio_set_mode(_PCF, i,type);
-    if(type==0){
-      mgos_pcf857x_gpio_setup_input(struct mgos_pcf857x *dev, int pin, enum mgos_gpio_pull_type pull_type);
-       LOG(LL_INFO, ("All ports %s configurated as input",_name));
-      }
-    else if(type==1){mgos_pcf857x_gpio_setup_output(struct mgos_pcf857x *dev, int pin, bool level);
-    LOG(LL_INFO, ("All ports %s configurated as output",_name));}
   }
-
+  else
+    LOG(LL_INFO, ("PCF857X Component %s created ",_name.c_str()));
+  mgos_gpio_mode type = static_cast<mgos_gpio_mode>(_cfg->type);
+  for (int i = 0; i < 8; i++)
+  {
+    mgos_pcf857x_gpio_set_mode(_PCF, i, type);
+    if (type == 0)
+    {
+      mgos_pcf857x_gpio_setup_input(_PCF, i,   MGOS_GPIO_PULL_NONE );
+      LOG(LL_INFO, ("All ports %s configurated as input", _name.c_str()));
+    }
+    else if (type == 1)
+    {
+      mgos_pcf857x_gpio_setup_output(_PCF, i,false);
+      LOG(LL_INFO, ("All ports %s configurated as output", _name.c_str()));
+    }
+  }
 }
 
 void PCFComp::Update(/* args */)
@@ -54,18 +61,19 @@ void PCFComp::Update(/* args */)
 }
 Status PCFComp::deInit(/* args */)
 {
-  if(mgos_pcf857x_destroy(&_PCF))return Status::OK();
+  if (mgos_pcf857x_destroy(&_PCF))
+    return Status::OK();
   LOG(LL_ERROR, ("Could not destroy PCF857X"));
-  return Status::CANCELLED(); 
+  return Status::CANCELLED();
 }
 
 bool PCFComp::Read(int pin)
 {
-  return mgos_pcf857x_gpio_read(_PCF,pin);
+  return mgos_pcf857x_gpio_read(_PCF, pin);
 }
 
 void PCFComp::Write(int pin, bool state)
 {
-  mgos_pcf857x_gpio_write(_PCF,pin,state);
-  LOG(LL_INFO, ("%s ports %d set %d",_name,pin,state));
+  mgos_pcf857x_gpio_write(_PCF, pin, state);
+  LOG(LL_INFO, ("%s ports %d set %d", _name.c_str(), pin, state));
 }

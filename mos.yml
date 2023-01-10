@@ -25,25 +25,28 @@ config_schema:
   - ["mqtt.pass", "neuro83"]
 #  - ["mqtt.ssl_ca_cert", "ca.pem"]
   - ["rpc.mqtt.enable", true]
-  - ["wifi.ap.enable",false]
-  - ["wifi.sta.enable",true]
-  - ["wifi.sta.ssid", "if_noise"]
-  - ["wifi.sta.pass", "00000006"]
+  # - ["wifi.ap.enable",false]
+  # - ["wifi.sta.enable",true]
+  # - ["wifi.sta.ssid", "if_noise"]
+  # - ["wifi.sta.pass", "00000006"]
+  - ["eth.enable",true]
   - ["debug.stderr_topic", "debug/stderr"]
  # - ["dash.enable",true]
  # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
   - ["i2c.enable", true]
+  - ["i2c.sda_gpio",  4]
+  - ["i2c.scl_gpio",  5]
   - ["debug.level", 2]
   #==================================================================================================
-  - ["modbus.enable", false]
-  - ["modbus.timeout", 2000]
-  - ["modbus.uart_no", 1]
-  - ["modbus.uart_tx_pin", 26]
-  - ["modbus.uart_rx_pin", 25]
-  - ["modbus.tx_en_enable", false]
-  - ["modbus.baudrate", 9600]
-  - ["modbus.parity", 0]
-  - ["modbus.stop_bits", 1]
+  # - ["modbus.enable", false]
+  # - ["modbus.timeout", 2000]
+  # - ["modbus.uart_no", 1]
+  # - ["modbus.uart_tx_pin", 26]
+  # - ["modbus.uart_rx_pin", 25]
+  # - ["modbus.tx_en_enable", false]
+  # - ["modbus.baudrate", 9600]
+  # - ["modbus.parity", 0]
+  # - ["modbus.stop_bits", 1]
     #=================================================================================================
   - ["dtcomp", "o", {title: "Dallas Temperature Component Settings"}]
   - ["dtcomp.port", "i", 13, {title: "One Wire gpio port number"}]
@@ -113,30 +116,7 @@ config_schema:
   - ["light.stop", "i", 0, {title: "Sunset(minutes of Day)"}]
   - ["light.output", "s", "", {title: "Output Object Name"}]
 #====================================================================================================
-  - ["intout1","intout", {title: "Heeater Output Settings"}]
-  - ["intout1.name","Heater"]
-  - ["intout1.pin",2]
-  - ["intout1.inverted",false]
-#====================================================================================================
-  - ["intout2","intout", {title: "Fan Cooler"}]
-  - ["intout2.name","Fan"]
-  - ["intout2.pin",14]
-  - ["intout2.inverted",false]
-#====================================================================================================
-  - ["intout3","intout", {title: "Fan Cooler Speed "}]
-  - ["intout3.name","FanSpeed"]
-  - ["intout3.pin",27]
-  - ["intout3.inverted",false]
-#====================================================================================================
-  - ["intout4","intout", {title: "Ligth Output "}]
-  - ["intout4.name","Light"]
-  - ["intout4.pin",16]
-  - ["intout4.inverted",false]
-#====================================================================================================
-  - ["intout5","intout", {title: "Irrigation Pump Output "}]
-  - ["intout5.name","Pump"]
-  - ["intout5.pin",17]
-  - ["intout5.inverted",false]
+
 #=====================================================================================================
   - ["reg1", "reg",{title: "Reg 1 Settings"}]
   - ["reg1.name", "HeaterTermostat"]
@@ -187,6 +167,40 @@ config_schema:
   - ["light1.stop", 28800]
   - ["light1.output", "Light"]
 #====================================================================================================
+  - ["pcfcomp1.name",""]
+  - ["pcfcomp1.address",0x24]
+  - ["pcfcomp1.type", 0]
+#====================================================================================================
+  - ["pcfout.prnt", "PCFOut"]
+  - ["pcfout.name", "Fan"]
+  - ["pcfout.pin",1]
+  - ["pcfout.inverted",false]
+#====================================================================================================
+  - ["pcfout.prnt", "PCFOut"]
+  - ["pcfout.name", "FanSpeed"]
+  - ["pcfout.pin",2]
+  - ["pcfout.inverted",false]
+#====================================================================================================
+  - ["pcfout.prnt", "PCFOut"]
+  - ["pcfout.name", "Pump"]
+  - ["pcfout.pin",3]
+  - ["pcfout.inverted",false]
+#====================================================================================================
+  - ["pcfout.prnt", "PCFOut"]
+  - ["pcfout.name", "Pump"]
+  - ["pcfout.pin",3]
+  - ["pcfout.inverted",false]
+#====================================================================================================
+  - ["pcfout.prnt", "PCFOut"]
+  - ["pcfout.name", "Pump"]
+  - ["pcfout.pin",3]
+  - ["pcfout.inverted",false]
+#====================================================================================================
+  - ["pcfout.prnt", "PCFOut"]
+  - ["pcfout.name", "Pump"]
+  - ["pcfout.pin",3]
+  - ["pcfout.inverted",false]
+
 
 
 libs:
@@ -199,9 +213,10 @@ libs:
   - origin: https://github.com/mongoose-os-libs/rpc-mqtt
   - origin: https://github.com/mongoose-os-libs/rpc-service-config
   - origin: https://github.com/mongoose-os-libs/rpc-service-fs
-  - origin: https://github.com/mongoose-os-libs/dallas-rmt
+  - origin: https://github.com/IfNoise/dallas-rmt
   - origin: https://github.com/mongoose-os-libs/bme280
-  - origin: https://github.com/mongoose-os-libs/wifi
+  # - origin: https://github.com/mongoose-os-libs/wifi
+  - origin: https://github.com/mongoose-os-libs/ethernet
   - origin: https://github.com/mongoose-os-libs/sntp
   - origin: https://github.com/mongoose-os-libs/pcf857x-i2c
   - origin: https://github.com/mongoose-os-libs/modbus

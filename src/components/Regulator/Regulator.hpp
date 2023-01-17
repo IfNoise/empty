@@ -42,8 +42,9 @@ Status Regulator::Init()
 {
     _output = App.getBinOutputByName(std::string(_cfg->output));
     _input = App.getSensorByName(std::string(_cfg->input));
-    _timer.Reset(_interval, MGOS_TIMER_REPEAT);
-    if (_timer.IsValid())
+    _timer= new Timer(_interval,MGOS_TIMER_REPEAT,std::bind(&Regulator::callback,this));
+    _timer->Reset(_interval, MGOS_TIMER_REPEAT);
+    if (_timer->IsValid())
         return Status::OK();
     else
         return Status::CANCELLED();

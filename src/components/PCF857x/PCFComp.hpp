@@ -1,3 +1,4 @@
+#pragma once
 #include "core/Component.hpp"
 #include "core/Output.hpp"
 #include "mgos.hpp"
@@ -23,6 +24,7 @@ public:
 
 PCFComp::PCFComp(mgos_config_pcfcomp *cfg) : Component(std::string(cfg->name)), _cfg(cfg)
 {
+ 
 }
 
 // PCFRelayComp::~PCFRelayComp( )
@@ -31,8 +33,7 @@ PCFComp::PCFComp(mgos_config_pcfcomp *cfg) : Component(std::string(cfg->name)), 
 
 Status PCFComp::Init(/* args */)
 {
-  if (!(_PCF = mgos_pcf8574_create(mgos_i2c_get_global(), _cfg->address,
-                                   mgos_sys_config_get_pcf857x_int_gpio())))
+  if (!(_PCF = mgos_pcf8574_create(mgos_i2c_get_global(), _cfg->address,-1)))
   {
     LOG(LL_ERROR, ("Could not create PCF857X"));
     return Status::CANCELLED();
@@ -40,20 +41,25 @@ Status PCFComp::Init(/* args */)
   else
     LOG(LL_INFO, ("PCF857X Component %s created ",_name.c_str()));
   mgos_gpio_mode type = static_cast<mgos_gpio_mode>(_cfg->type);
-  for (int i = 0; i < 8; i++)
+  for (int i = 0; i < 8; ++i)
   {
     mgos_pcf857x_gpio_set_mode(_PCF, i, type);
-    if (type == 0)
+    if (type == 1)
     {
       mgos_pcf857x_gpio_setup_input(_PCF, i,   MGOS_GPIO_PULL_NONE );
-      LOG(LL_INFO, ("All ports %s configurated as input", _name.c_str()));
+       mgos_pcf857x_gpio_write(_PCF, i, true);
+      LOG(LL_INFO, ("Port # %d of %s configurated as input",i, _name.c_str()));
+      
     }
-    else if (type == 1)
+    else if (type == 0)
     {
       mgos_pcf857x_gpio_setup_output(_PCF, i,false);
-      LOG(LL_INFO, ("All ports %s configurated as output", _name.c_str()));
+      mgos_pcf857x_gpio_write(_PCF, i, true);
+      LOG(LL_INFO, ("Port # %d of %s configurated as output",i, _name.c_str()));
+    
     }
   }
+    return Status::OK();
 }
 
 void PCFComp::Update(/* args */)

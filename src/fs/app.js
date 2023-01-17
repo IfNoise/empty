@@ -43,9 +43,8 @@ App.Footer = function (props) {
     class: 'd-flex align-items-stretch border-top',
     style: 'flex-shrink: 0;'
   },
-    mkTabButton('Dashboard', 'fa-server', App.PageDashboard, '#/'),
-    mkTabButton('Settings', 'fa-gear', App.PageSettings, '#/config'),
-    mkTabButton('Files', 'fa-folder', App.PageDeviceFiles, '#/files'));
+    mkTabButton('Dashboard', 'fa-server', App.PageDashboard, '#/dash'),
+    mkTabButton('Settings', 'fa-gear', App.PageSettings, '#/'))
 };
 
 App.errorHandler = function (e) {
@@ -571,11 +570,15 @@ App.PageDashboard = function (props) {
 
     return h('div',
       { class: 'w-100 overflow-auto p-2 text-muted font-weight-light', style: 'scroll' }, !props.app.state.loaded ? h('h1', {}, 'Loading') :
-      h(App.Regulator, { app: props.app, obj: 'reg1' }),
+
       h(App.Regulator, { app: props.app, obj: 'reg2' }),
       h(App.Regulator, { app: props.app, obj: 'reg3' }),
       h(App.LightTimer, { app: props.app, obj: 'light1' }),
-      h(App.IrrigationTimer, { app: props.app, obj: 'irr1' })
+      h(App.IrrigationTimer, { app: props.app, obj: 'irr1' }),
+      h(App.IrrigationTimer, { app: props.app, obj: 'irr2' }),
+      h(App.IrrigationTimer, { app: props.app, obj: 'irr3' }),
+      h(App.IrrigationTimer, { app: props.app, obj: 'irr4' }),
+      h(App.IrrigationTimer, { app: props.app, obj: 'irr5' })
     );
   }
 };
@@ -626,16 +629,6 @@ App.PageDeviceFiles = function (props) {
   );
 };
 
-App.PageDeviceState = function (props) {
-  var self = this;
-
-  self.componentDidMount = function () {
-
-  };
-
-
-
-};
 
 App.Content = function (props) {
   return h(
@@ -645,10 +638,9 @@ App.Content = function (props) {
       props.app.setState({ url: ev.url });
     }
   },
-    h(App.PageDashboard, { app: props.app, default: true }),
-    h(App.PageSettings, { app: props.app, path: 'config' }),
-    h(App.PageDeviceFiles, { app: props.app, path: 'files' }),
-    h(App.PageDeviceState, { app: props.app, path: 'state' }));
+    h(App.PageSettings, { app: props.app,default: true }),
+    h(App.PageDashboard, { app: props.app, path: 'dash'  }),
+    h(App.PageDeviceFiles, { app: props.app, path: 'files' }),);
 
 };
 
@@ -696,7 +688,7 @@ App.Instance = function (props) {
 
 
     // Setup JSON-RPC engine
-    var rpc = mkrpc('ws://' + '192.168.2.160' + '/rpc');
+    var rpc = mkrpc('ws://' + '192.168.1.34' + '/rpc');
     rpc.onopen = ev => {
       // When RPC is connected, fetch list of supported RPC services
       self.setState({ connected: true });

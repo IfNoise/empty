@@ -2,7 +2,6 @@
 #include "common/util/status.h"
 #include "mgos_timers.hpp"
 #include <string>
-
 using namespace mgos;
 
 class Component
@@ -30,22 +29,22 @@ class PollingComponent: public Component
   void callback(){Update();}
   protected:
   uint32_t _interval{0};
-  Timer _timer;
+  Timer *_timer{nullptr};
 };
 
 PollingComponent::PollingComponent(std::string name,int interval):
 Component(name),
-_interval(interval),
-_timer(Timer(_interval,MGOS_TIMER_REPEAT,std::bind(&PollingComponent::callback,this))){}
+_interval(interval){}
 
 Status PollingComponent::deInit()
 {
-   _timer.Clear(); 
+   _timer->Clear(); 
    return Status::OK();
 }
 Status PollingComponent::Init()
 {
-_timer.Reset(_interval,MGOS_TIMER_REPEAT);
-if(_timer.IsValid())return Status::OK();
+_timer= new Timer(_interval,MGOS_TIMER_REPEAT,std::bind(&PollingComponent::callback,this));
+_timer->Reset(_interval,MGOS_TIMER_REPEAT);
+if(_timer->IsValid())return Status::OK();
 else return Status::CANCELLED();
 }

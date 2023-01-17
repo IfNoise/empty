@@ -46,7 +46,12 @@ Scheduler::Scheduler(std::string name, std::string output) : PollingComponent(na
 Status Scheduler::Init()
 {
     _out = App.getBinOutputByName(_output);
-    return Status::OK();
+    _timer=new Timer(_interval,MGOS_TIMER_REPEAT,std::bind(&PollingComponent::callback,this));
+    _timer->Reset(_interval, MGOS_TIMER_REPEAT);
+    if (_timer->IsValid())
+        return Status::OK();
+    else
+        return Status::CANCELLED();
 }
 
 void Scheduler::check()
@@ -56,7 +61,7 @@ void Scheduler::check()
     // LOG(LL_INFO, (" %s checking,now %d:%d:%d", _name.c_str(),tm_info->tm_hour,tm_info->tm_min,tm_info->tm_sec));
     unsigned int cursec = tm_info->tm_sec + tm_info->tm_min * 60 + tm_info->tm_hour * 3600;
     // LOG(LL_INFO, (" %s checking,cursec =%d c.", _name.c_str(),cursec));
-    bool curState = _out->getState();
+    if(_out){bool curState = _out->getState();
     bool state{false};
     for (SchedulerItem item : _items)
     {
@@ -79,7 +84,7 @@ void Scheduler::check()
             off();
             LOG(LL_INFO, (" Item is off"));
         }
-    }
+    }}else LOG(LL_ERROR, (" Outpun is not setting Up"));
 }
 
 void Scheduler::on()

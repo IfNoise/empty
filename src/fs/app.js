@@ -639,7 +639,7 @@ App.Content = function (props) {
     }
   },
     h(App.PageSettings, { app: props.app,default: true }),
-    h(App.PageDashboard, { app: props.app, path: 'dash'  }),
+    // h(App.PageDashboard, { app: props.app, path: 'dash'  }),
     h(App.PageDeviceFiles, { app: props.app, path: 'files' }),);
 
 };
@@ -693,7 +693,7 @@ App.Instance = function (props) {
       // When RPC is connected, fetch list of supported RPC services
       self.setState({ connected: true });
 
-      loadConfig().then(() => loadSensors()).then(() => loadOutputs()).then(() => {
+      loadConfig().then(() => loadOutputs()).then(() => {
         if (self.state.config) {
           self.setState({ loaded: true });
           console.log('All data loaded');

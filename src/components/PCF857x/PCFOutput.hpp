@@ -1,10 +1,8 @@
 #pragma once
-#include "core/Component.hpp"
 #include "PCFComp.hpp"
 #include "core/Output.hpp"
 #include "mgos.hpp"
 #include "mgos_config.h"
-#include "mgos_pcf857x.h"
 #include <vector>
 #include "core/Application.hpp"
 

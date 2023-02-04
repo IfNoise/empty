@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.hpp"
 #include "components/PCF857x/PCFComp.hpp"
+#include "components/ADM4108r/adm4108rComp.hpp"
 // #include "components/DTSensor/DTSensor.hpp"
 // #include "Sensor.hpp"
 #include "Input.hpp"
@@ -15,6 +16,7 @@ class Application
 private:
   std::vector<Component *> _components{};
   std::vector<PCFComp *> _pcfs{};
+  std::vector<adm4108rComp *> _adms{};
 // std::vector<Sensor *> _sensors{};
   std::vector<BinaryOutput *> _binOutputs{};
   std::vector<FloatOutput *> _floatOutputs{};
@@ -26,6 +28,7 @@ public:
   //Registring Objects in application
   Status registerComponent(Component *component);
   Status registerPCFComp(PCFComp *pcf);
+  Status registerADMComp(adm4108rComp *adm);
   // Status registerSensor(Sensor *sensor);
   Status registerBinOutput(BinaryOutput *output);
   Status registerFloatOutput(FloatOutput *output);
@@ -40,6 +43,7 @@ public:
   FloatInput *getFloatInputByName(const std::string name);
   Component *getComponentByName(const std::string);
   PCFComp *getPCFCompByName(const std::string);
+  adm4108rComp *getADMCompByName(const std::string);
   // DTComponent * getDtComp(){return _dtcomp;};
 
 
@@ -71,6 +75,11 @@ Status Application::registerComponent(Component *component)
 Status Application::registerPCFComp(PCFComp *pcf)
 {
   _pcfs.push_back(pcf);
+  return Status::OK();
+}
+Status registerADMComp(adm4108rComp *adm)
+{
+  _adms.push_back(adm);
   return Status::OK();
 }
 
@@ -294,7 +303,7 @@ std::string Application::printState()
 {
   std::string res;
   int i = 0;
-  time_t now = 3600 * 3 + time(0);
+  time_t now = 3600 * 7 + time(0);
   // for (auto *sensor : this->_sensors)
   // {
   //   if (i == 0)

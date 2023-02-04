@@ -56,11 +56,11 @@ Status Scheduler::Init()
 
 void Scheduler::check()
 {
-    time_t now = 3600 * 3 + time(0);
+    time_t now = 3600 * 7 + time(0);
     tm *tm_info = gmtime(&now);
-    // LOG(LL_INFO, (" %s checking,now %d:%d:%d", _name.c_str(),tm_info->tm_hour,tm_info->tm_min,tm_info->tm_sec));
+    LOG(LL_INFO, (" %s checking,now %d:%d:%d", _name.c_str(),tm_info->tm_hour,tm_info->tm_min,tm_info->tm_sec));
     unsigned int cursec = tm_info->tm_sec + tm_info->tm_min * 60 + tm_info->tm_hour * 3600;
-    // LOG(LL_INFO, (" %s checking,cursec =%d c.", _name.c_str(),cursec));
+    LOG(LL_INFO, (" %s checking,cursec =%d c.", _name.c_str(),cursec));
     if(_out){bool curState = _out->getState();
     bool state{false};
     for (SchedulerItem item : _items)

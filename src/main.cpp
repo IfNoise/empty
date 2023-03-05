@@ -19,6 +19,7 @@
 #include "mgos_rpc.h"
 #include "core/Application.hpp"
 #include "components/PCF857x/PCFOutput.hpp"
+#include "components/ADM4108r/admOut.hpp"
 // #include "components/Regulator/Regulator.hpp"
 #include "components/DailyScheduler/IrrigationScheduler.hpp"
 #include "components/DailyScheduler/LightTimer.hpp"
@@ -27,6 +28,7 @@
 Application App;
 //=================================Components================================================
 static PCFComp *pcfComp{nullptr};
+static adm4108rComp *admComp{nullptr};
 static IrrigationScheduler *Irrigator1{nullptr};
 static IrrigationScheduler *Irrigator2{nullptr};
 static IrrigationScheduler *Irrigator3{nullptr};
@@ -34,6 +36,7 @@ static IrrigationScheduler *Irrigator4{nullptr};
 static IrrigationScheduler *Irrigator5{nullptr};
 static IrrigationScheduler *Irrigator6{nullptr};
 static IrrigationScheduler *Irrigator7{nullptr};
+static IrrigationScheduler *Irrigator8{nullptr};
 static LightTimer *LightTmr{nullptr};
 //=================================Outputs====================================================
 static PCFOut *Light{nullptr};
@@ -44,6 +47,15 @@ static PCFOut *Pump4{nullptr};
 static PCFOut *Pump5{nullptr};
 static PCFOut *Pump6{nullptr};
 static PCFOut *Pump7{nullptr};
+
+static admOut *Valve1{nullptr};
+static admOut *Valve2{nullptr};
+static admOut *Valve3{nullptr};
+static admOut *Valve4{nullptr};
+static admOut *Valve5{nullptr};
+static admOut *Valve6{nullptr};
+static admOut *Valve7{nullptr};
+static admOut *Valve8{nullptr};
 //=======================================Timers===============================================
 Timer *SensorPrintT{nullptr};
 
@@ -77,11 +89,14 @@ void InitApp(void)
 
   // dtComp = new DTComponent((mgos_config_dtcomp*)mgos_sys_config_get_dtcomp());
   pcfComp = new PCFComp((mgos_config_pcfcomp*)mgos_sys_config_get_pcfcomp1());
+  admComp = new adm4108rComp((mgos_config_admcomp*)mgos_sys_config_get_admcomp1());
   // dtComp->Init();
   pcfComp->Init();
+  admComp->Init();
   //======================================Registration Components Objects=====================
   // App.registerDtComp(dtComp);
   App.registerPCFComp(pcfComp);
+  App.registerADMComp(admComp);
   
 
 
@@ -95,19 +110,37 @@ void InitApp(void)
   Pump6 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout7());
   Pump7 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout8());
 
+  Valve1 =new admOut((mgos_config_admout*)mgos_sys_config_get_admout1());
+  Valve2 =new admOut((mgos_config_admout*)mgos_sys_config_get_admout2());
+  Valve3 =new admOut((mgos_config_admout*)mgos_sys_config_get_admout3());
+  Valve4 =new admOut((mgos_config_admout*)mgos_sys_config_get_admout4());
+  Valve5 =new admOut((mgos_config_admout*)mgos_sys_config_get_admout5());
+  Valve6 =new admOut((mgos_config_admout*)mgos_sys_config_get_admout6());
+  Valve7 =new admOut((mgos_config_admout*)mgos_sys_config_get_admout7());
+  Valve8 =new admOut((mgos_config_admout*)mgos_sys_config_get_admout8());
 
 
 
   //======================================Registration  Outputs Objects ======================
 
   App.registerBinOutput(Light);
-  App.registerBinOutput(Pump6);
-  App.registerBinOutput(Pump7);
+
   App.registerBinOutput(Pump1);
   App.registerBinOutput(Pump2);
   App.registerBinOutput(Pump3);
   App.registerBinOutput(Pump4);
   App.registerBinOutput(Pump5);
+  App.registerBinOutput(Pump6);
+  App.registerBinOutput(Pump7);
+
+  App.registerBinOutput(Valve1);
+  App.registerBinOutput(Valve2);
+  App.registerBinOutput(Valve3);
+  App.registerBinOutput(Valve4);
+  App.registerBinOutput(Valve5);
+  App.registerBinOutput(Valve6);
+  App.registerBinOutput(Valve7);
+  App.registerBinOutput(Valve8);
 
   Irrigator1 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr1());
   Irrigator2 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr2());
@@ -116,6 +149,7 @@ void InitApp(void)
   Irrigator5 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr5());
   Irrigator6 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr6());
   Irrigator7 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr7());
+  Irrigator8 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr8());
   LightTmr = new LightTimer((mgos_config_light*)mgos_sys_config_get_light1()); 
 
   App.registerComponent(LightTmr);
@@ -126,6 +160,7 @@ void InitApp(void)
   App.registerComponent(Irrigator5);
   App.registerComponent(Irrigator6);
   App.registerComponent(Irrigator7);
+  App.registerComponent(Irrigator8);
 
   App.InitAll();
 

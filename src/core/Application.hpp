@@ -77,7 +77,7 @@ Status Application::registerPCFComp(PCFComp *pcf)
   _pcfs.push_back(pcf);
   return Status::OK();
 }
-Status registerADMComp(adm4108rComp *adm)
+Status Application::registerADMComp(adm4108rComp *adm)
 {
   _adms.push_back(adm);
   return Status::OK();
@@ -176,6 +176,16 @@ Component *Application::getComponentByName(const std::string name)
 PCFComp *Application::getPCFCompByName(const std::string name)
 {
   for (auto *ptr : this->_pcfs)
+  {
+    if (ptr->getName() == name)
+      return ptr;
+  }
+  return nullptr;
+}
+
+adm4108rComp *Application::getADMCompByName(const std::string name)
+{
+  for (auto *ptr : this->_adms)
   {
     if (ptr->getName() == name)
       return ptr;

@@ -688,7 +688,7 @@ App.Instance = function (props) {
 
 
     // Setup JSON-RPC engine
-    var rpc = mkrpc('ws://' + '192.168.1.34' + '/rpc');
+    var rpc = mkrpc('ws://' + location.host + '/rpc');
     rpc.onopen = ev => {
       // When RPC is connected, fetch list of supported RPC services
       self.setState({ connected: true });

@@ -11,10 +11,11 @@
 class adm4108rComp : public Component
 {
 private:
-  static void respCallback(uint8_t status, struct mb_request_info info, struct mbuf response, void* param);
+ 
   mgos_config_admcomp *_cfg;
 public:
-  adm4108rComp(mgos_config_admcomp *_cfg{nullptr});
+  static void respCallback(uint8_t status, struct mb_request_info info, struct mbuf response, void* param);
+  adm4108rComp(mgos_config_admcomp *cfg);
   Status Init() override;
   void Update() override;
   Status deInit() override;
@@ -40,7 +41,7 @@ void adm4108rComp::respCallback(uint8_t status, mb_request_info info, mbuf respo
   }
 }
 
-adm4108rComp::adm4108rComp(mgos_config_admcomp *_cfg) : Component(std::string(cfg->name)), _cfg(cfg)
+adm4108rComp::adm4108rComp(mgos_config_admcomp *cfg) : Component(std::string(cfg->name)), _cfg(cfg)
 {
 
 }
@@ -66,9 +67,9 @@ bool adm4108rComp::Read(int pin)
 {
     if( pin<1&&pin>8){
     LOG(LL_ERROR, ("Pin number not valid"));
-    return;
+    return false;
   }
-  return mb_read_coils(_cfg->slave_id, (uint16_t)pin , uint16_t read_qty, std::bind(&adm4108rComp::respCallback,this), nullptr);
+  return mb_read_coils(_cfg->slave_id, (uint16_t)pin , 1, &adm4108rComp::respCallback, NULL);//TODO
 }
 
 void adm4108rComp::Write(int pin, bool state)
@@ -81,5 +82,5 @@ void adm4108rComp::Write(int pin, bool state)
     LOG(LL_ERROR, ("Pin number not valid"));
     return;
   }
-  mb_write_single_coil(_cfg->slave_id,  (uint16_t)pin , data,std::bind(&adm4108rComp::respCallback,this), nullptr);
+  mb_write_single_coil(_cfg->slave_id,  (uint16_t)pin ,1, &adm4108rComp::respCallback, NULL);
 }

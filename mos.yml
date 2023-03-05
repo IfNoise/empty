@@ -20,7 +20,7 @@ filesystem:
 
 config_schema:
   - ["mqtt.enable", true]  
-  - ["mqtt.server", "192.168.2.22:1883"]
+  - ["mqtt.server", "192.168.31.250:1883"]
   - ["mqtt.user", "noise83"]
   - ["mqtt.pass", "neuro83"]
 #  - ["mqtt.ssl_ca_cert", "ca.pem"]
@@ -39,8 +39,8 @@ config_schema:
   - ["modbus.enable", false]
   - ["modbus.timeout", 2000]
   - ["modbus.uart_no", 1]
-  - ["modbus.uart_tx_pin", 26]
-  - ["modbus.uart_rx_pin", 25]
+  - ["modbus.uart_tx_pin", 14]
+  - ["modbus.uart_rx_pin", 13]
   - ["modbus.tx_en_enable", false]
   - ["modbus.baudrate", 9600]
   - ["modbus.parity", 0]
@@ -125,11 +125,15 @@ config_schema:
   - ["pcfcomp1.address",0x24]
   - ["pcfcomp1.type", 0]
 #====================================================================================================
+  - ["admcomp1", "admcomp",{title: "ADM4108r Component Settings"}]
+  - ["admcomp1.name", "ADMOut1"]
+  - ["admcomp1.slave_id",1]
+#====================================================================================================
   - ["irr1", "irr", {title: "Irrigation Scheduler Settings"}]
   - ["irr1.name", "Irrigator1"]
   - ["irr1.enable",true]
   - ["irr1.mode", 2]
-  - ["irr1.output", "Pump1"]
+  - ["irr1.output", "Valve1"]
   - ["irr1.start",72000]
   - ["irr1.stop", 28800]
   - ["irr1.num", 12]
@@ -139,7 +143,7 @@ config_schema:
   - ["irr2.name", "Irrigator2"]
   - ["irr2.enable",true]
   - ["irr2.mode", 2]
-  - ["irr2.output", "Pump2"]
+  - ["irr2.output", "Valve2"]
   - ["irr2.start",72000]
   - ["irr2.stop", 28800]
   - ["irr2.num", 3]
@@ -149,7 +153,7 @@ config_schema:
   - ["irr3.name", "Irrigator3"]
   - ["irr3.enable",true]
   - ["irr3.mode", 2]
-  - ["irr3.output", "Pump3"]
+  - ["irr3.output", "Valve3"]
   - ["irr3.start",72000]
   - ["irr3.stop", 28800]
   - ["irr3.num", 6]
@@ -159,7 +163,7 @@ config_schema:
   - ["irr4.name", "Irrigator4"]
   - ["irr4.enable",true]
   - ["irr4.mode", 2]
-  - ["irr4.output", "Pump4"]
+  - ["irr4.output", "Valve4"]
   - ["irr4.start",72000]
   - ["irr4.stop", 28800]
   - ["irr4.num", 8]
@@ -169,7 +173,7 @@ config_schema:
   - ["irr5.name", "Irrigator5"]
   - ["irr5.enable",true]
   - ["irr5.mode", 2]
-  - ["irr5.output", "Pump5"]
+  - ["irr5.output", "Valve5"]
   - ["irr5.start",72000]
   - ["irr5.stop", 28800]
   - ["irr5.num", 24]
@@ -179,7 +183,7 @@ config_schema:
   - ["irr6.name", "Irrigator6"]
   - ["irr6.enable",true]
   - ["irr6.mode", 2]
-  - ["irr6.output", "Pump6"]
+  - ["irr6.output", "Valve6"]
   - ["irr6.start",72000]
   - ["irr6.stop", 28800]
   - ["irr6.num", 8]
@@ -189,11 +193,21 @@ config_schema:
   - ["irr7.name", "Irrigator7"]
   - ["irr7.enable",true]
   - ["irr7.mode", 2]
-  - ["irr7.output", "Pump7"]
+  - ["irr7.output", "Valve7"]
   - ["irr7.start",72000]
   - ["irr7.stop", 28800]
   - ["irr7.num", 24]
   - ["irr7.win", 4]
+  #====================================================================================================
+  - ["irr8", "irr", {title: "Irrigation Scheduler Settings"}]
+  - ["irr8.name", "Irrigator8"]
+  - ["irr8.enable",true]
+  - ["irr8.mode", 2]
+  - ["irr8.output", "Valve8"]
+  - ["irr8.start",72000]
+  - ["irr8.stop", 28800]
+  - ["irr8.num", 24]
+  - ["irr8.win", 4]
 #====================================================================================================
   - ["light1", "light", {title: "Light Timer Settings"}]
   - ["light1.name", "LightTimer"]
@@ -206,7 +220,7 @@ config_schema:
 #====================================================================================================
   - ["pcfout1", "pcfout", {title: "PCFOutput Settings"}]
   - ["pcfout1.prnt", "PCFOut"]
-  - ["pcfout1.name", "Ligth"]
+  - ["pcfout1.name", "Light"]
   - ["pcfout1.pin",0]
   - ["pcfout1.inverted",true]
 #====================================================================================================
@@ -251,7 +265,47 @@ config_schema:
   - ["pcfout8.name", "Pump7"]
   - ["pcfout8.pin",7]
   - ["pcfout8.inverted",true]
-
+  #====================================================================================================
+  #=================================================================================================
+  - ["admout1", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
+  - ["admout1.prnt", "ADMOut1"]
+  - ["admout1.name", "Valve1"]
+  - ["admout1.pin",0]
+#=================================================================================================
+  - ["admout2", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
+  - ["admout2.prnt", "ADMOut1"]
+  - ["admout2.name", "Valve2"]
+  - ["admout2.pin",1]
+#=================================================================================================
+  - ["admout3", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
+  - ["admout3.prnt", "ADMOut1"]
+  - ["admout3.name", "Valve3"]
+  - ["admout3.pin",2]
+#=================================================================================================
+  - ["admout4", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
+  - ["admout4.prnt", "ADMOut1"]
+  - ["admout4.name", "Valve4"]
+  - ["admout4.pin",3]
+#=================================================================================================
+  - ["admout5", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
+  - ["admout5.prnt", "ADMOut1"]
+  - ["admout5.name", "Valve5"]
+  - ["admout5.pin",4]
+#=================================================================================================
+  - ["admout6", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
+  - ["admout6.prnt", "ADMOut1"]
+  - ["admout6.name", "Valve6"]
+  - ["admout6.pin",5]
+#=================================================================================================
+  - ["admout7", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
+  - ["admout7.prnt", "ADMOut1"]
+  - ["admout7.name", "Valve7"]
+  - ["admout7.pin",6]
+#=================================================================================================
+  - ["admout8", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
+  - ["admout8.prnt", "ADMOut1"]
+  - ["admout8.name", "Valve8"]
+  - ["admout8.pin",7]
 
 
 

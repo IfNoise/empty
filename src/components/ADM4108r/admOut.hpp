@@ -13,14 +13,19 @@ private:
  adm4108rComp *_parent{nullptr};
  mgos_config_admout *_cfg;
 public:
-  admOut(mgos_config_admout *_cfg);
+  admOut(mgos_config_admout *cfg);
   Status setState(bool state) override;
   bool getState() override;
   std::string getInfo() override;
 };
 
-admOut::admOut(mgos_config_admout *_cfg): BinaryOutput(std::string(cfg->name)), _cfg(cfg)
+admOut::admOut(mgos_config_admout *cfg): BinaryOutput(std::string(cfg->name)), _cfg(cfg)
 {
+  _parent = App.getADMCompByName(std::string(_cfg->prnt)); ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  if (_parent != nullptr)
+    LOG(LL_INFO, ("Parent set %s", _cfg->prnt));
+  else
+    LOG(LL_ERROR, ("Parent object not found or wrong"));
 }
 
 Status admOut::setState(bool state)

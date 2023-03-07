@@ -300,7 +300,6 @@ void Application::publishBinOuts()
       char buf[64];
       sprintf(buf, "%s/state/outputs/%s", mgos_sys_config_get_device_id(), output->getName().c_str());
       mgos_mqtt_pubf(buf, 0, false, "%d", int(output->getState()));
-      mgos_msleep(100);
     }
     LOG(LL_INFO, ("Binary Outputs states is published"));
   }

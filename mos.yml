@@ -36,7 +36,7 @@ config_schema:
   - ["i2c.scl_gpio",  5]
   - ["debug.level", 2]
   #==================================================================================================
-  - ["modbus.enable", false]
+  - ["modbus.enable", true]
   - ["modbus.timeout", 2000]
   - ["modbus.uart_no", 1]
   - ["modbus.uart_tx_pin", 14]
@@ -58,6 +58,7 @@ config_schema:
   - ["admcomp", "o", {title: "ADM4108r Modbus Relay Settings", abstract: true}]
   - ["admcomp.name", "s", "", {title: "PCF857x Expander Output Name"}]
   - ["admcomp.slave_id", "i", 1, {title: "Device slave id"}]
+  - ["admcomp.inter","i",5000,{title: "Update interval"}]
   #=================================================================================================
   - ["r4d8comp", "o", {title: "R4D8 Modbus Relay Module Settings"}]
   - ["r4d8comp.address", "i", 0, {title: "Output Pin"}]
@@ -128,6 +129,7 @@ config_schema:
   - ["admcomp1", "admcomp",{title: "ADM4108r Component Settings"}]
   - ["admcomp1.name", "ADMOut1"]
   - ["admcomp1.slave_id",1]
+  - ["admcomp1.inter",5000]
 #====================================================================================================
   - ["irr1", "irr", {title: "Irrigation Scheduler Settings"}]
   - ["irr1.name", "Irrigator1"]
@@ -270,42 +272,42 @@ config_schema:
   - ["admout1", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
   - ["admout1.prnt", "ADMOut1"]
   - ["admout1.name", "Valve1"]
-  - ["admout1.pin",0]
+  - ["admout1.pin",1]
 #=================================================================================================
   - ["admout2", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
   - ["admout2.prnt", "ADMOut1"]
   - ["admout2.name", "Valve2"]
-  - ["admout2.pin",1]
+  - ["admout2.pin",2]
 #=================================================================================================
   - ["admout3", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
   - ["admout3.prnt", "ADMOut1"]
   - ["admout3.name", "Valve3"]
-  - ["admout3.pin",2]
+  - ["admout3.pin",3]
 #=================================================================================================
   - ["admout4", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
   - ["admout4.prnt", "ADMOut1"]
   - ["admout4.name", "Valve4"]
-  - ["admout4.pin",3]
+  - ["admout4.pin",4]
 #=================================================================================================
   - ["admout5", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
   - ["admout5.prnt", "ADMOut1"]
   - ["admout5.name", "Valve5"]
-  - ["admout5.pin",4]
+  - ["admout5.pin",5]
 #=================================================================================================
   - ["admout6", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
   - ["admout6.prnt", "ADMOut1"]
   - ["admout6.name", "Valve6"]
-  - ["admout6.pin",5]
+  - ["admout6.pin",6]
 #=================================================================================================
   - ["admout7", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
   - ["admout7.prnt", "ADMOut1"]
   - ["admout7.name", "Valve7"]
-  - ["admout7.pin",6]
+  - ["admout7.pin",7]
 #=================================================================================================
   - ["admout8", "admout", {title: "ADM4108r Modbus Relay Output Settings"}]
   - ["admout8.prnt", "ADMOut1"]
   - ["admout8.name", "Valve8"]
-  - ["admout8.pin",7]
+  - ["admout8.pin",8]
 
 
 

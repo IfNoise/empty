@@ -171,7 +171,7 @@ mg_rpc_add_handler(mgos_rpc_get_global(), "Get.Outputs", NULL, getOutputs, NULL)
 
 
   //========================================Creating Timers===================================
-  SensorPrintT = new Timer(5000, MGOS_TIMER_REPEAT,std::bind(&Application::publishAll,&App));
+  SensorPrintT = new Timer(10000, MGOS_TIMER_REPEAT,std::bind(&Application::publishAll,&App));
 }
 //============================================================================================
 extern "C" enum mgos_app_init_result mgos_app_init(void)

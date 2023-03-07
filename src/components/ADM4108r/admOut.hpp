@@ -32,7 +32,7 @@ Status admOut::setState(bool state)
 {
   if (_parent)
   {
-    _parent->Write(_cfg->pin, (state ^ (_cfg->inverted)));
+    _parent->Write(_cfg->pin, state);
     return Status::OK();
   }
     LOG(LL_ERROR, ("Parent object not found or wrong"));
@@ -43,7 +43,7 @@ bool admOut::getState()
 {
 if (_parent)
   {
-    return _parent->Read(_cfg->pin) ^ _cfg->inverted;
+    return _parent->Read(_cfg->pin) ;//^ _cfg->inverted;
   }
   else
   {

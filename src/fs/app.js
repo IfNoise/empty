@@ -708,9 +708,9 @@ App.Instance = function (props) {
     //rpc.onout = ev => logframe('-> ', ev);
     rpc.onin = ev => console.log('<- ', ev);
     self.rpc = rpc;
-    self.timer = setInterval(() => {
-      self.updateDeviceState();
-    }, 5000);
+    //self.timer = setInterval(() => {
+    //  self.updateDeviceState();
+    //}, 5000);
   };
 
 

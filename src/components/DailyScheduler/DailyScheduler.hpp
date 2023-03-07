@@ -70,7 +70,7 @@ void Scheduler::check()
             state = item.start > item.stop ? ((cursec >= item.start) || (cursec < item.stop)) : ((cursec >= item.start) && (cursec < item.stop));
             if (state)
             {
-                LOG(LL_INFO, (" Item start=%d stop=%d", item.start, item.stop));
+                LOG(LL_INFO, (" %s Item start=%d stop=%d", _name.c_str(),item.start, item.stop));
                 break;
             }
         }
@@ -97,7 +97,7 @@ void Scheduler::on()
     if (_out != nullptr)
     {
         _out->setState(true);
-        LOG(LL_INFO, (" setState called ON"));
+        LOG(LL_INFO, (" %s setState called ON",_name.c_str()));
     }
     if (_onCallback != nullptr)
     {
@@ -110,7 +110,7 @@ void Scheduler::off()
     if (_out != nullptr)
     {
         _out->setState(false);
-        LOG(LL_INFO, (" setState called OFF"));
+        LOG(LL_INFO, ("%s  setState called OFF",_name.c_str()));
     }
     if (_offCallback != nullptr)
     {

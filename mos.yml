@@ -20,7 +20,7 @@ filesystem:
 
 config_schema:
   - ["mqtt.enable", true]  
-  - ["mqtt.server", "192.168.2.22:1883"]
+  - ["mqtt.server", "192.168.31.250:1883"]
   - ["mqtt.user", "noise83"]
   - ["mqtt.pass", "neuro83"]
 #  - ["mqtt.ssl_ca_cert", "ca.pem"]

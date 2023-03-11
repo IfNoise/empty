@@ -1,4 +1,4 @@
-#pragma once
+  #pragma once
 #include "Component.hpp"
 #include "components/PCF857x/PCFComp.hpp"
 #include "components/ADM4108r/adm4108rComp.hpp"
@@ -77,7 +77,7 @@ Status Application::registerPCFComp(PCFComp *pcf)
   _pcfs.push_back(pcf);
   return Status::OK();
 }
-Status registerADMComp(adm4108rComp *adm)
+Status Application::registerADMComp(adm4108rComp *adm)
 {
   _adms.push_back(adm);
   return Status::OK();
@@ -176,6 +176,16 @@ Component *Application::getComponentByName(const std::string name)
 PCFComp *Application::getPCFCompByName(const std::string name)
 {
   for (auto *ptr : this->_pcfs)
+  {
+    if (ptr->getName() == name)
+      return ptr;
+  }
+  return nullptr;
+}
+
+adm4108rComp *Application::getADMCompByName(const std::string name)
+{
+  for (auto *ptr : this->_adms)
   {
     if (ptr->getName() == name)
       return ptr;
@@ -290,7 +300,6 @@ void Application::publishBinOuts()
       char buf[64];
       sprintf(buf, "%s/state/outputs/%s", mgos_sys_config_get_device_id(), output->getName().c_str());
       mgos_mqtt_pubf(buf, 0, false, "%d", int(output->getState()));
-      mgos_msleep(100);
     }
     LOG(LL_INFO, ("Binary Outputs states is published"));
   }

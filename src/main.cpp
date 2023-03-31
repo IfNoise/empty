@@ -33,12 +33,12 @@ static IrrigationScheduler *Irrigator3{nullptr};
 static IrrigationScheduler *Irrigator4{nullptr};
 static IrrigationScheduler *Irrigator5{nullptr};
 static IrrigationScheduler *Irrigator6{nullptr};
-static IrrigationScheduler *Irrigator7{nullptr};
 static LightTimer *LightTmr{nullptr};
+static LightTimer *CO2Tmr{nullptr};
 //=================================Outputs====================================================
 static PCFOut *Light{nullptr};
 static PCFOut *Pump1{nullptr};
-static PCFOut *Pump2{nullptr};
+static PCFOut *CO2{nullptr};
 static PCFOut *Pump3{nullptr};
 static PCFOut *Pump4{nullptr};
 static PCFOut *Pump5{nullptr};
@@ -88,7 +88,7 @@ void InitApp(void)
   //====================================Creating Outputs Objects =============================
   Light = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout1());
   Pump1 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout2());
-  Pump2 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout3());
+  CO2 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout3());
   Pump3 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout4());
   Pump4 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout5());
   Pump5 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout6());
@@ -104,7 +104,7 @@ void InitApp(void)
   App.registerBinOutput(Pump6);
   App.registerBinOutput(Pump7);
   App.registerBinOutput(Pump1);
-  App.registerBinOutput(Pump2);
+  App.registerBinOutput(CO2);
   App.registerBinOutput(Pump3);
   App.registerBinOutput(Pump4);
   App.registerBinOutput(Pump5);
@@ -115,7 +115,7 @@ void InitApp(void)
   Irrigator4 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr4());
   Irrigator5 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr5());
   Irrigator6 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr6());
-  Irrigator7 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr7());
+  CO2Tmr = new LightTimer((mgos_config_light*)mgos_sys_config_get_light2());
   LightTmr = new LightTimer((mgos_config_light*)mgos_sys_config_get_light1()); 
 
   App.registerComponent(LightTmr);
@@ -125,7 +125,7 @@ void InitApp(void)
   App.registerComponent(Irrigator4);
   App.registerComponent(Irrigator5);
   App.registerComponent(Irrigator6);
-  App.registerComponent(Irrigator7);
+  App.registerComponent(CO2Tmr);
 
   App.InitAll();
 

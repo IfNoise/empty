@@ -25,9 +25,12 @@ config_schema:
   - ["mqtt.pass", "neuro83"]
 #  - ["mqtt.ssl_ca_cert", "ca.pem"]
   - ["rpc.mqtt.enable", true]
-  - ["eth.enable",true]
-  - ["eth.clk_mode", 3]
-
+#  - ["eth.enable",true]
+#  - ["eth.clk_mode", 3]
+  - ["wifi.ap.enable",false]	  # - ["wifi.ap.enable",false]
+  - ["wifi.sta.enable",true]	  # - ["wifi.sta.enable",true]
+  - ["wifi.sta.ssid", "DDWeed"]	  # - ["wifi.sta.ssid", "if_noise"]
+  - ["wifi.sta.pass", "00000006"]
   - ["debug.stderr_topic", "debug/stderr"]
  # - ["dash.enable",true]
  # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
@@ -55,10 +58,6 @@ config_schema:
   - ["pcfcomp.address", "i", 0, {title: "i2c addres"}]
   - ["pcfcomp.type", "i", 0, {title: "Type of GPIO input- 1,output-0"}]
   #=================================================================================================
-  - ["admcomp", "o", {title: "ADM4108r Modbus Relay Settings", abstract: true}]
-  - ["admcomp.name", "s", "", {title: "PCF857x Expander Output Name"}]
-  - ["admcomp.slave_id", "i", 1, {title: "Device slave id"}]
-  - ["admcomp.inter","i",5000,{title: "Update interval"}]
   #=================================================================================================
   - ["r4d8comp", "o", {title: "R4D8 Modbus Relay Module Settings"}]
   - ["r4d8comp.address", "i", 0, {title: "Output Pin"}]
@@ -78,12 +77,6 @@ config_schema:
   - ["pcfout.name", "s", "", {title: "Output Name"}]
   - ["pcfout.pin", "i", 0, {title: "Output Pin"}]
   - ["pcfout.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
-  #=================================================================================================
-  - ["admout", "o", {title: "ADM4108r Modbus Relay Output Settings", abstract: true}]
-  - ["admout.prnt", "s", "", {title: "Parent adm4108r Expander Name"}]
-  - ["admout.name", "s", "", {title: "Output Name"}]
-  - ["admout.pin", "i", 0, {title: "Output Pin"}]
-  - ["admout.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
   #=================================================================================================
   - ["pcfin", "o", {title: "PCF857x Input Settings", abstract: true}]
   - ["pcfin.prnt", "s", "", {title: "Parent PCF857x Expander Name"}]
@@ -129,17 +122,17 @@ config_schema:
   - ["irr1", "irr", {title: "Irrigation Scheduler Settings"}]
   - ["irr1.name", "Irrigator1"]
   - ["irr1.enable",true]
-  - ["irr1.mode", 2]
+  - ["irr1.mode", 1]
   - ["irr1.output", "Pump1"]
-  - ["irr1.start",41400]
-  - ["irr1.stop", 84600]
-  - ["irr1.num", 12]
-  - ["irr1.win", 240]
+  - ["irr1.start",28800]
+  - ["irr1.stop", 72000]
+  - ["irr1.num", 24]
+  - ["irr1.win", 150]
 #====================================================================================================
   - ["irr2", "irr", {title: "Irrigation Scheduler Settings"}]
   - ["irr2.name", "Irrigator2"]
   - ["irr2.enable",true]
-  - ["irr2.mode", 2]
+  - ["irr2.mode", 1]
   - ["irr2.output", "Pump7"]
   - ["irr2.start",21600]
   - ["irr2.stop", 84599]
@@ -149,7 +142,7 @@ config_schema:
   - ["irr3", "irr", {title: "Irrigation Scheduler Settings"}]
   - ["irr3.name", "Irrigator3"]
   - ["irr3.enable",true]
-  - ["irr3.mode", 2]
+  - ["irr3.mode", 0]
   - ["irr3.output", "Pump3"]
   - ["irr3.start",72000]
   - ["irr3.stop", 28800]
@@ -159,17 +152,17 @@ config_schema:
   - ["irr4", "irr", {title: "Irrigation Scheduler Settings"}]
   - ["irr4.name", "Irrigator4"]
   - ["irr4.enable",true]
-  - ["irr4.mode", 2]
+  - ["irr4.mode", 0]
   - ["irr4.output", "Pump4"]
   - ["irr4.start",72000]
   - ["irr4.stop", 28800]
   - ["irr4.num", 8]
-  - ["irr4.win", 4]
+  - ["irr4.win", 240]
 #====================================================================================================
   - ["irr5", "irr", {title: "Irrigation Scheduler Settings"}]
   - ["irr5.name", "Irrigator5"]
   - ["irr5.enable",true]
-  - ["irr5.mode", 2]
+  - ["irr5.mode", 1]
   - ["irr5.output", "Pump5"]
   - ["irr5.start",72000]
   - ["irr5.stop", 28800]
@@ -179,27 +172,29 @@ config_schema:
   - ["irr6", "irr", {title: "Irrigation Scheduler Settings"}]
   - ["irr6.name", "Irrigator6"]
   - ["irr6.enable",true]
-  - ["irr6.mode", 2]
+  - ["irr6.mode", 1]
   - ["irr6.output", "Pump6"]
   - ["irr6.start",72000]
   - ["irr6.stop", 28800]
   - ["irr6.num", 8]
   - ["irr6.win", 240]
 #====================================================================================================
-  - ["light2", "light", {title: "CO2 Timer Settings"}]
-  - ["light2.name", "CO2Timer"]
-  - ["light2.enable",true ]
-  - ["light2.mode",1]
-  - ["light2.start", 39600]
-  - ["light2.stop", 82800]
-  - ["light2.output", "CO2"]
+  - ["irr7", "irr", {title: "Irrigation Scheduler Settings"}]
+  - ["irr7.name", "Irrigator7"]
+  - ["irr7.enable",true]
+  - ["irr7.mode", 1]
+  - ["irr7.output", "Pump7"]
+  - ["irr7.start",72000]
+  - ["irr7.stop", 28800]
+  - ["irr7.num", 24]
+  - ["irr7.win", 240]
 #====================================================================================================
   - ["light1", "light", {title: "Light Timer Settings"}]
   - ["light1.name", "LightTimer"]
   - ["light1.enable",true ]
   - ["light1.mode",2]
-  - ["light1.start", 41400]
-  - ["light1.stop", 84600]
+  - ["light1.start", 28800]
+  - ["light1.stop", 72000]
   - ["light1.output", "Light"]
 
 #====================================================================================================
@@ -217,7 +212,7 @@ config_schema:
 #====================================================================================================
   - ["pcfout3", "pcfout", {title: "PCFOutput Settings"}]
   - ["pcfout3.prnt", "PCFOut"]
-  - ["pcfout3.name", "CO2"]
+  - ["pcfout3.name", "Pump2"]
   - ["pcfout3.pin",2]
   - ["pcfout3.inverted",true]
 #====================================================================================================
@@ -267,7 +262,7 @@ libs:
   - origin: https://github.com/mongoose-os-libs/rpc-service-i2c
   # - origin: https://github.com/IfNoise/dallas-rmt
 #  - origin: https://github.com/mongoose-os-libs/bme280
-#  - origin: https://github.com/mongoose-os-libs/wifi
+  - origin: https://github.com/mongoose-os-libs/wifi
   - origin: https://github.com/mongoose-os-libs/ethernet
   - origin: https://github.com/mongoose-os-libs/sntp
   - origin: https://github.com/mongoose-os-libs/pcf857x-i2c

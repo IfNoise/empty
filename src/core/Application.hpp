@@ -1,9 +1,6 @@
   #pragma once
 #include "Component.hpp"
 #include "components/PCF857x/PCFComp.hpp"
-#include "components/ADM4108r/adm4108rComp.hpp"
-// #include "components/DTSensor/DTSensor.hpp"
-// #include "Sensor.hpp"
 #include "Input.hpp"
 #include "Output.hpp"
 #include "mgos.hpp"
@@ -16,7 +13,6 @@ class Application
 private:
   std::vector<Component *> _components{};
   std::vector<PCFComp *> _pcfs{};
-  std::vector<adm4108rComp *> _adms{};
 // std::vector<Sensor *> _sensors{};
   std::vector<BinaryOutput *> _binOutputs{};
   std::vector<FloatOutput *> _floatOutputs{};
@@ -28,23 +24,17 @@ public:
   //Registring Objects in application
   Status registerComponent(Component *component);
   Status registerPCFComp(PCFComp *pcf);
-  Status registerADMComp(adm4108rComp *adm);
   // Status registerSensor(Sensor *sensor);
   Status registerBinOutput(BinaryOutput *output);
   Status registerFloatOutput(FloatOutput *output);
   Status registerBinInput(BinaryInput *output);
   Status registerFloatInput(FloatInput *output);
-  // Status registerDtComp(DTComponent *comp);
-  // Getting pointer to Object 
-  // Sensor *getSensorByName(const std::string name);
   BinaryOutput *getBinOutputByName(const std::string name);
   FloatOutput *getFloatOutputByName(const std::string name);
   BinaryInput *getBinInputByName(const std::string name);
   FloatInput *getFloatInputByName(const std::string name);
   Component *getComponentByName(const std::string);
   PCFComp *getPCFCompByName(const std::string);
-  adm4108rComp *getADMCompByName(const std::string);
-  // DTComponent * getDtComp(){return _dtcomp;};
 
 
   //========================================
@@ -77,17 +67,6 @@ Status Application::registerPCFComp(PCFComp *pcf)
   _pcfs.push_back(pcf);
   return Status::OK();
 }
-Status Application::registerADMComp(adm4108rComp *adm)
-{
-  _adms.push_back(adm);
-  return Status::OK();
-}
-
-// Status Application::registerSensor(Sensor *sensor)
-// {
-//   _sensors.push_back(sensor);
-//   return Status::OK();
-// }
 
 Status Application::registerBinOutput(BinaryOutput *output)
 {
@@ -113,15 +92,6 @@ Status Application::registerFloatInput(FloatInput *input)
   return Status::OK();
 }
 
-// Sensor *Application::getSensorByName(const std::string name)
-// {
-//   for (auto *ptr : this->_sensors)
-//   {
-//     if (ptr->getName() == name)
-//       return ptr;
-//   }
-//   return nullptr;
-// }
 
 BinaryOutput *Application::getBinOutputByName(const std::string name)
 {
@@ -183,15 +153,6 @@ PCFComp *Application::getPCFCompByName(const std::string name)
   return nullptr;
 }
 
-adm4108rComp *Application::getADMCompByName(const std::string name)
-{
-  for (auto *ptr : this->_adms)
-  {
-    if (ptr->getName() == name)
-      return ptr;
-  }
-  return nullptr;
-}
 
 Status Application::InitAll()
 {

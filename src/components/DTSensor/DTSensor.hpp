@@ -6,8 +6,6 @@
 #include "DallasRmt.h"
 #include <vector>
 #include "core/Application.hpp"
-//#include "frozen.h"
-
 class DTSensor;
 
 std::string format_hex(const uint8_t *data)

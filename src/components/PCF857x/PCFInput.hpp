@@ -1,3 +1,4 @@
+#pragma once
 #include "core/Component.hpp"
 #include "PCFComp.hpp"
 #include "core/Input.hpp"

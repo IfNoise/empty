@@ -12,6 +12,8 @@ public:
   void Update() override;
   void calc();
 };
+
+
 IrrigationScheduler::IrrigationScheduler(mgos_config_irr * cfg) : 
 Scheduler(cfg->name, cfg->output),
 _cfg(cfg)

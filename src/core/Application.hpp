@@ -1,6 +1,9 @@
-#pragma once
+  #pragma once
 #include "Component.hpp"
-#include "Sensor.hpp"
+#include "components/PCF857x/PCFComp.hpp"
+#include "components/ADM4108r/adm4108rComp.hpp"
+// #include "components/DTSensor/DTSensor.hpp"
+// #include "Sensor.hpp"
 #include "Input.hpp"
 #include "Output.hpp"
 #include "mgos.hpp"
@@ -12,38 +15,46 @@ class Application
 {
 private:
   std::vector<Component *> _components{};
-  std::vector<Sensor *> _sensors{};
+  std::vector<PCFComp *> _pcfs{};
+  std::vector<adm4108rComp *> _adms{};
+// std::vector<Sensor *> _sensors{};
   std::vector<BinaryOutput *> _binOutputs{};
   std::vector<FloatOutput *> _floatOutputs{};
   std::vector<BinaryInput *> _binInputs{};
   std::vector<FloatInput *> _floatInputs{};
-
+  // DTComponent *_dtcomp{nullptr};
 public:
 
   //Registring Objects in application
   Status registerComponent(Component *component);
-  Status registerSensor(Sensor *sensor);
+  Status registerPCFComp(PCFComp *pcf);
+  Status registerADMComp(adm4108rComp *adm);
+  // Status registerSensor(Sensor *sensor);
   Status registerBinOutput(BinaryOutput *output);
   Status registerFloatOutput(FloatOutput *output);
   Status registerBinInput(BinaryInput *output);
   Status registerFloatInput(FloatInput *output);
-
+  // Status registerDtComp(DTComponent *comp);
   // Getting pointer to Object 
-  Sensor *getSensorByName(const std::string name);
+  // Sensor *getSensorByName(const std::string name);
   BinaryOutput *getBinOutputByName(const std::string name);
   FloatOutput *getFloatOutputByName(const std::string name);
   BinaryInput *getBinInputByName(const std::string name);
   FloatInput *getFloatInputByName(const std::string name);
   Component *getComponentByName(const std::string);
+  PCFComp *getPCFCompByName(const std::string);
+  adm4108rComp *getADMCompByName(const std::string);
+  // DTComponent * getDtComp(){return _dtcomp;};
+
 
   //========================================
   Status InitAll();
   void UpdateAll();
-  std::string printSensors();
+  // std::string printSensors();
   std::string printOutputs();
   std::string printState();
-  void saveSensorsToFile();
-  void publishSensors();
+  // void saveSensorsToFile();
+  // void publishSensors();
   void publishState();
   void publishBinOuts();
   void publishAll();
@@ -55,11 +66,28 @@ Status Application::registerComponent(Component *component)
   return Status::OK();
 }
 
-Status Application::registerSensor(Sensor *sensor)
+// Status Application::registerDtComp(DTComponent *comp)
+// {
+//   _dtcomp=comp;
+//   return Status::OK();
+// }
+
+Status Application::registerPCFComp(PCFComp *pcf)
 {
-  _sensors.push_back(sensor);
+  _pcfs.push_back(pcf);
   return Status::OK();
 }
+Status Application::registerADMComp(adm4108rComp *adm)
+{
+  _adms.push_back(adm);
+  return Status::OK();
+}
+
+// Status Application::registerSensor(Sensor *sensor)
+// {
+//   _sensors.push_back(sensor);
+//   return Status::OK();
+// }
 
 Status Application::registerBinOutput(BinaryOutput *output)
 {
@@ -85,15 +113,15 @@ Status Application::registerFloatInput(FloatInput *input)
   return Status::OK();
 }
 
-Sensor *Application::getSensorByName(const std::string name)
-{
-  for (auto *ptr : this->_sensors)
-  {
-    if (ptr->getName() == name)
-      return ptr;
-  }
-  return nullptr;
-}
+// Sensor *Application::getSensorByName(const std::string name)
+// {
+//   for (auto *ptr : this->_sensors)
+//   {
+//     if (ptr->getName() == name)
+//       return ptr;
+//   }
+//   return nullptr;
+// }
 
 BinaryOutput *Application::getBinOutputByName(const std::string name)
 {
@@ -145,6 +173,26 @@ Component *Application::getComponentByName(const std::string name)
   return nullptr;
 }
 
+PCFComp *Application::getPCFCompByName(const std::string name)
+{
+  for (auto *ptr : this->_pcfs)
+  {
+    if (ptr->getName() == name)
+      return ptr;
+  }
+  return nullptr;
+}
+
+adm4108rComp *Application::getADMCompByName(const std::string name)
+{
+  for (auto *ptr : this->_adms)
+  {
+    if (ptr->getName() == name)
+      return ptr;
+  }
+  return nullptr;
+}
+
 Status Application::InitAll()
 {
 
@@ -152,6 +200,10 @@ Status Application::InitAll()
   {
     comp->Init();
   }
+  // for (auto *comp : this->_pcfs)
+  // {
+  //   comp->Init();
+  // }
   // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   return Status::OK();
 }
@@ -164,26 +216,26 @@ void Application::UpdateAll()
   }
 }
 
-std::string Application::printSensors()
-{
-  std::string res = "";
-  int i = 0;
-  for (auto *sensor : this->_sensors)
-  {
-    if (i == 0)
-    {
-      mgos::JSONAppendStringf(&res, "{sensors: [%s", sensor->getInfo().c_str());
-    }
-    else
-    {
-      mgos::JSONAppendStringf(&res, ",%s", sensor->getInfo().c_str());
-    }
-    ++i;
-  }
-  res += "]}";
-  LOG(LL_INFO, ("Sensors %s", res.c_str()));
-  return res;
-}
+// std::string Application::printSensors()
+// {
+//   std::string res = "";
+//   int i = 0;
+//   for (auto *sensor : this->_sensors)
+//   {
+//     if (i == 0)
+//     {
+//       mgos::JSONAppendStringf(&res, "{sensors: [%s", sensor->getInfo().c_str());
+//     }
+//     else
+//     {
+//       mgos::JSONAppendStringf(&res, ",%s", sensor->getInfo().c_str());
+//     }
+//     ++i;
+//   }
+//   res += "]}";
+//   LOG(LL_INFO, ("Sensors %s", res.c_str()));
+//   return res;
+// }
 std::string Application::printOutputs()
 {
   std::string res = "";
@@ -204,25 +256,25 @@ std::string Application::printOutputs()
 
   return res;
 }
-void Application::publishSensors()
-{
-  if (mgos_mqtt_global_is_connected())
-  {
-    for (auto *sensor : this->_sensors)
-    {
+// void Application::publishSensors()
+// {
+//   if (mgos_mqtt_global_is_connected())
+//   {
+//     for (auto *sensor : this->_sensors)
+//     {
 
-      char buf[64];
-      sprintf(buf, "%s/state/sensors/%s", mgos_sys_config_get_device_id(), sensor->getName().c_str());
-      mgos_mqtt_pubf(buf, 0, false, "%0.2f", sensor->getState());
-      mgos_msleep(100);
-    }
-    LOG(LL_INFO, ("Sensors is published"));
-  }
-  else
-  {
-    LOG(LL_INFO, ("Sensors is not published,MQTT brocker connection is lost"));
-  }
-}
+//       char buf[64];
+//       sprintf(buf, "%s/state/sensors/%s", mgos_sys_config_get_device_id(), sensor->getName().c_str());
+//       mgos_mqtt_pubf(buf, 0, false, "%0.2f", sensor->getState());
+//       mgos_msleep(100);
+//     }
+//     LOG(LL_INFO, ("Sensors is published"));
+//   }
+//   else
+//   {
+//     LOG(LL_INFO, ("Sensors is not published,MQTT brocker connection is lost"));
+//   }
+// }
 void Application::publishState()
 {
   if (mgos_mqtt_global_is_connected())
@@ -245,10 +297,9 @@ void Application::publishBinOuts()
     for (auto *output : this->_binOutputs)
     {
 
-      char buf[64];
+      char buf[128];
       sprintf(buf, "%s/state/outputs/%s", mgos_sys_config_get_device_id(), output->getName().c_str());
       mgos_mqtt_pubf(buf, 0, false, "%d", int(output->getState()));
-      mgos_msleep(100);
     }
     LOG(LL_INFO, ("Binary Outputs states is published"));
   }
@@ -261,27 +312,26 @@ std::string Application::printState()
 {
   std::string res;
   int i = 0;
-  time_t now = 3600 * 3 + time(0);
-    tm *tm_info = gmtime(&now);
-  for (auto *sensor : this->_sensors)
-  {
-    if (i == 0)
-    {
-      mgos::JSONAppendStringf(&res, "{sensors: [{name:%Q,state:%.2f}", sensor->getName().c_str(), sensor->getState());
-    }
-    else
-    {
-      mgos::JSONAppendStringf(&res, ",{name:%Q,state:%.2f}", sensor->getName().c_str(), sensor->getState());
-    }
-    ++i;
-  }
-  res += "]";
-  i = 0;
+  time_t now = 3600 * 7 + time(0);
+  // for (auto *sensor : this->_sensors)
+  // {
+  //   if (i == 0)
+  //   {
+  //     mgos::JSONAppendStringf(&res, "{sensors: [{name:%Q,state:%.2f}", sensor->getName().c_str(), sensor->getState());
+  //   }
+  //   else
+  //   {
+  //     mgos::JSONAppendStringf(&res, ",{name:%Q,state:%.2f}", sensor->getName().c_str(), sensor->getState());
+  //   }
+  //   ++i;
+  // }
+  // res += "]";
+  // i = 0;
   for (auto *output : this->_binOutputs)
   {
     if (i == 0)
     {
-      mgos::JSONAppendStringf(&res, ",outputs: [{name:%Q,state:%B}", output->getName().c_str(), output->getState());
+      mgos::JSONAppendStringf(&res, "{outputs: [{name:%Q,state:%B}", output->getName().c_str(), output->getState());
     }
     else
     {
@@ -297,34 +347,34 @@ std::string Application::printState()
 
 void Application::publishAll()
 {
-  publishSensors();
+  // publishSensors();
   publishBinOuts();
   // publishState();
   // saveSensorsToFile();
   // printSensors();
 }
-void Application::saveSensorsToFile()
-{
-  char templ[1024] = "{\"sensors\":[{\"name\":\" \",\"state\":0}]}";
-  char *temp = templ;
-  // FILE *fp = fopen("sensors.json", "w");
-  char buf[1024];
-  char *p = buf;
-  int i = 0;
-  struct json_out output = JSON_OUT_BUF(p, 1024);
-  for (auto *sensor : this->_sensors)
-  {
-    char path[32];
-    sprintf(path, ".sensors[%d]", i);
-    json_setf(temp, strlen(temp), &output, path, "%s", sensor->getInfo().c_str());
-    strncpy(temp, buf, strlen(buf));
-    // json_prettify(buf,1024,&output);
+// void Application::saveSensorsToFile()
+// {
+//   char templ[1024] = "{\"sensors\":[{\"name\":\" \",\"state\":0}]}";
+//   char *temp = templ;
+//   // FILE *fp = fopen("sensors.json", "w");
+//   char buf[1024];
+//   char *p = buf;
+//   int i = 0;
+//   struct json_out output = JSON_OUT_BUF(p, 1024);
+//   for (auto *sensor : this->_sensors)
+//   {
+//     char path[32];
+//     sprintf(path, ".sensors[%d]", i);
+//     json_setf(temp, strlen(temp), &output, path, "%s", sensor->getInfo().c_str());
+//     strncpy(temp, buf, strlen(buf));
+//     // json_prettify(buf,1024,&output);
 
-    // LOG(LL_INFO, ("%s \n \n",temp.c_str()));
-    ++i;
-  }
-  LOG(LL_INFO, ("%s", p));
-  // fclose(fp);
-}
+//     // LOG(LL_INFO, ("%s \n \n",temp.c_str()));
+//     ++i;
+//   }
+//   LOG(LL_INFO, ("%s", p));
+//   // fclose(fp);
+// }
 
 extern Application App;

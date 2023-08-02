@@ -297,7 +297,7 @@ void Application::publishBinOuts()
     for (auto *output : this->_binOutputs)
     {
 
-      char buf[64];
+      char buf[128];
       sprintf(buf, "%s/state/outputs/%s", mgos_sys_config_get_device_id(), output->getName().c_str());
       mgos_mqtt_pubf(buf, 0, false, "%d", int(output->getState()));
     }

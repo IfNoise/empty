@@ -26,24 +26,41 @@
 
 Application App;
 //=================================Components================================================
-static PCFComp *pcfComp{nullptr};
+static PCFComp *pcfComp1{nullptr};
+static PCFComp *pcfComp2{nullptr};
 static IrrigationScheduler *Irrigator1{nullptr};
 static IrrigationScheduler *Irrigator2{nullptr};
 static IrrigationScheduler *Irrigator3{nullptr};
 static IrrigationScheduler *Irrigator4{nullptr};
 static IrrigationScheduler *Irrigator5{nullptr};
 static IrrigationScheduler *Irrigator6{nullptr};
-static LightTimer *LightTmr{nullptr};
-static LightTimer *CO2Tmr{nullptr};
+static IrrigationScheduler *Irrigator7{nullptr};
+static IrrigationScheduler *Irrigator8{nullptr};
+static IrrigationScheduler *Irrigator9{nullptr};
+static IrrigationScheduler *Irrigator10{nullptr};
+static IrrigationScheduler *Irrigator11{nullptr};
+static IrrigationScheduler *Irrigator12{nullptr};
+static IrrigationScheduler *Irrigator13{nullptr};
+static IrrigationScheduler *Irrigator14{nullptr};
+static IrrigationScheduler *Irrigator15{nullptr};
+static IrrigationScheduler *Irrigator16{nullptr};
 //=================================Outputs====================================================
-static PCFOut *Light{nullptr};
-static PCFOut *Pump1{nullptr};
-static PCFOut *CO2{nullptr};
-static PCFOut *Pump3{nullptr};
-static PCFOut *Pump4{nullptr};
-static PCFOut *Pump5{nullptr};
-static PCFOut *Pump6{nullptr};
-static PCFOut *Pump7{nullptr};
+static PCFOut *Valve1{nullptr};
+static PCFOut *Valve2{nullptr};
+static PCFOut *Valve3{nullptr};
+static PCFOut *Valve4{nullptr};
+static PCFOut *Valve5{nullptr};
+static PCFOut *Valve6{nullptr};
+static PCFOut *Valve7{nullptr};
+static PCFOut *Valve8{nullptr};
+static PCFOut *Valve9{nullptr};
+static PCFOut *Valve10{nullptr};
+static PCFOut *Valve11{nullptr};
+static PCFOut *Valve12{nullptr};
+static PCFOut *Valve13{nullptr};
+static PCFOut *Valve14{nullptr};
+static PCFOut *Valve15{nullptr};
+static PCFOut *Valve16{nullptr};
 //=======================================Timers===============================================
 Timer *SensorPrintT{nullptr};
 
@@ -76,38 +93,56 @@ void InitApp(void)
   //=====================================Creating Components Objects==========================
 
   // dtComp = new DTComponent((mgos_config_dtcomp*)mgos_sys_config_get_dtcomp());
-  pcfComp = new PCFComp((mgos_config_pcfcomp*)mgos_sys_config_get_pcfcomp1());
+  pcfComp1 = new PCFComp((mgos_config_pcfcomp*)mgos_sys_config_get_pcfcomp1());
+  pcfComp2 = new PCFComp((mgos_config_pcfcomp*)mgos_sys_config_get_pcfcomp2());
   // dtComp->Init();
-  pcfComp->Init();
+  pcfComp1->Init();
+  pcfComp2->Init();
   //======================================Registration Components Objects=====================
   // App.registerDtComp(dtComp);
-  App.registerPCFComp(pcfComp);
+  App.registerPCFComp(pcfComp1);
+  App.registerPCFComp(pcfComp2);
   
 
 
   //====================================Creating Outputs Objects =============================
-  Light = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout1());
-  Pump1 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout2());
-  CO2 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout3());
-  Pump3 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout4());
-  Pump4 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout5());
-  Pump5 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout6());
-  Pump6 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout7());
-  Pump7 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout8());
-
+  Valve1 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout1());
+  Valve2 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout2());
+  Valve3 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout3());
+  Valve4 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout4());
+  Valve5 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout5());
+  Valve6 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout6());
+  Valve7 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout7());
+  Valve8 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout8());
+  Valve9 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout9());
+  Valve10 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout10());
+  Valve11 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout11());
+  Valve12 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout12());
+  Valve13 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout13());
+  Valve14 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout14());
+  Valve15 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout15());
+  Valve16 = new PCFOut((mgos_config_pcfout*)mgos_sys_config_get_pcfout16());
 
 
 
   //======================================Registration  Outputs Objects ======================
 
-  App.registerBinOutput(Light);
-  App.registerBinOutput(Pump6);
-  App.registerBinOutput(Pump7);
-  App.registerBinOutput(Pump1);
-  App.registerBinOutput(CO2);
-  App.registerBinOutput(Pump3);
-  App.registerBinOutput(Pump4);
-  App.registerBinOutput(Pump5);
+  App.registerBinOutput(Valve1);
+  App.registerBinOutput(Valve2);
+  App.registerBinOutput(Valve3);
+  App.registerBinOutput(Valve4);
+  App.registerBinOutput(Valve5);
+  App.registerBinOutput(Valve6);
+  App.registerBinOutput(Valve7);
+  App.registerBinOutput(Valve8);
+  App.registerBinOutput(Valve9);
+  App.registerBinOutput(Valve10);
+  App.registerBinOutput(Valve11);
+  App.registerBinOutput(Valve12);
+  App.registerBinOutput(Valve13);
+  App.registerBinOutput(Valve14);
+  App.registerBinOutput(Valve15);
+  App.registerBinOutput(Valve16);
 
   Irrigator1 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr1());
   Irrigator2 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr2());
@@ -115,17 +150,34 @@ void InitApp(void)
   Irrigator4 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr4());
   Irrigator5 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr5());
   Irrigator6 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr6());
-  CO2Tmr = new LightTimer((mgos_config_light*)mgos_sys_config_get_light2());
-  LightTmr = new LightTimer((mgos_config_light*)mgos_sys_config_get_light1()); 
+  Irrigator7 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr7());
+  Irrigator8 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr8());
+  Irrigator9 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr9());
+  Irrigator10 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr10());
+  Irrigator11 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr11());
+  Irrigator12 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr12());
+  Irrigator13 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr13());
+  Irrigator14 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr14());
+  Irrigator15 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr15());
+  Irrigator16 = new IrrigationScheduler((mgos_config_irr*)mgos_sys_config_get_irr16());
 
-  App.registerComponent(LightTmr);
   App.registerComponent(Irrigator1);
   App.registerComponent(Irrigator2);
   App.registerComponent(Irrigator3);
   App.registerComponent(Irrigator4);
   App.registerComponent(Irrigator5);
   App.registerComponent(Irrigator6);
-  App.registerComponent(CO2Tmr);
+  App.registerComponent(Irrigator7);
+  App.registerComponent(Irrigator8);
+  App.registerComponent(Irrigator9);
+  App.registerComponent(Irrigator10);
+  App.registerComponent(Irrigator11);
+  App.registerComponent(Irrigator12);
+  App.registerComponent(Irrigator13);
+  App.registerComponent(Irrigator14);
+  App.registerComponent(Irrigator15);
+  App.registerComponent(Irrigator16);
+
 
   App.InitAll();
 

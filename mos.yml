@@ -25,12 +25,12 @@ config_schema:
   - ["mqtt.pass", "neuro83"]
 #  - ["mqtt.ssl_ca_cert", "ca.pem"]
   - ["rpc.mqtt.enable", true]
-#  - ["eth.enable",true]
-#  - ["eth.clk_mode", 3]
-  - ["wifi.ap.enable",false]	  # - ["wifi.ap.enable",false]
-  - ["wifi.sta.enable",true]	  # - ["wifi.sta.enable",true]
-  - ["wifi.sta.ssid", "DDWeed"]	  # - ["wifi.sta.ssid", "if_noise"]
-  - ["wifi.sta.pass", "00000006"]
+  - ["eth.enable",true]
+  - ["eth.clk_mode", 3]
+#  - ["wifi.ap.enable",false]	 
+#  - ["wifi.sta.enable",true]
+#  - ["wifi.sta.ssid", "DDWeed"]
+#  - ["wifi.sta.pass", "00000006"]
   - ["debug.stderr_topic", "debug/stderr"]
  # - ["dash.enable",true]
  # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
@@ -262,7 +262,7 @@ libs:
   - origin: https://github.com/mongoose-os-libs/rpc-service-i2c
   # - origin: https://github.com/IfNoise/dallas-rmt
 #  - origin: https://github.com/mongoose-os-libs/bme280
-  - origin: https://github.com/mongoose-os-libs/wifi
+#  - origin: https://github.com/mongoose-os-libs/wifi
   - origin: https://github.com/mongoose-os-libs/ethernet
   - origin: https://github.com/mongoose-os-libs/sntp
   - origin: https://github.com/mongoose-os-libs/pcf857x-i2c

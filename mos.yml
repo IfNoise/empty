@@ -19,24 +19,28 @@ filesystem:
   - src/fs
 
 config_schema:
-  - ["mqtt.enable", true]  
-  - ["mqtt.server", "192.168.31.250:1883"]
-  - ["mqtt.user", "noise83"]
-  - ["mqtt.pass", "neuro83"]
-#  - ["mqtt.ssl_ca_cert", "ca.pem"]
+  - ["mqtt.enable", true]
+  - ["mqtt.server", "192.168.24.113:1883"]
+  - ["mqtt.user", "iot_device"]
+  - ["mqtt.pass", "device_mqtt_pass"]
+  #  - ["mqtt.ssl_ca_cert", "ca.pem"]
   - ["rpc.mqtt.enable", true]
-  - ["eth.enable",true]
-  - ["eth.clk_mode", 3]
-#  - ["wifi.ap.enable",false]	 
-#  - ["wifi.sta.enable",true]
-#  - ["wifi.sta.ssid", "DDWeed"]
-#  - ["wifi.sta.pass", "00000006"]
+  - ["rpc.ws.enable", true]
+  - ["rpc.ws.server_address", "192.168.24.113:8080"]
+  - ["rpc.ws.reconnect_interval_min", 1]
+  - ["rpc.ws.reconnect_interval_max", 60]
+  # - ["eth.enable",true]
+  # - ["eth.clk_mode", 3]
+  - ["wifi.ap.enable", false]
+  - ["wifi.sta.enable", true]
+  - ["wifi.sta.ssid", "if_noise"]
+  - ["wifi.sta.pass", "00000006"]
   - ["debug.stderr_topic", "debug/stderr"]
- # - ["dash.enable",true]
- # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
+  # - ["dash.enable",true]
+  # - ["dash.token","08hXLBtjgoC91TOwTIX4qSw"]
   - ["i2c.enable", true]
-  - ["i2c.sda_gpio",  4]
-  - ["i2c.scl_gpio",  5]
+  - ["i2c.sda_gpio", 4]
+  - ["i2c.scl_gpio", 5]
   - ["debug.level", 2]
   #==================================================================================================
   - ["modbus.enable", false]
@@ -49,209 +53,221 @@ config_schema:
   - ["modbus.parity", 0]
   - ["modbus.stop_bits", 1]
   #=================================================================================================
-  - ["dtcomp", "o", {title: "Dallas Temperature Component Settings"}]
-  - ["dtcomp.port", "i", 14, {title: "One Wire gpio port number"}]
-  - ["dtcomp.saved", "b", false, {title: "true if sansors saved at fs"}]
+  - ["dtcomp", "o", { title: "Dallas Temperature Component Settings" }]
+  - ["dtcomp.port", "i", 14, { title: "One Wire gpio port number" }]
+  - ["dtcomp.saved", "b", false, { title: "true if sansors saved at fs" }]
   #=================================================================================================
-  - ["pcfcomp", "o", {title: "PCF857x Expander Settings", abstract: true}]
-  - ["pcfcomp.name", "s", "", {title: "PCF857x Expander Output Name"}]
-  - ["pcfcomp.address", "i", 0, {title: "i2c addres"}]
-  - ["pcfcomp.type", "i", 0, {title: "Type of GPIO input- 1,output-0"}]
+  - ["pcfcomp", "o", { title: "PCF857x Expander Settings", abstract: true }]
+  - ["pcfcomp.name", "s", "", { title: "PCF857x Expander Output Name" }]
+  - ["pcfcomp.address", "i", 0, { title: "i2c addres" }]
+  - ["pcfcomp.type", "i", 0, { title: "Type of GPIO input- 1,output-0" }]
   #=================================================================================================
   #=================================================================================================
-  - ["r4d8comp", "o", {title: "R4D8 Modbus Relay Module Settings"}]
-  - ["r4d8comp.address", "i", 0, {title: "Output Pin"}]
+  - ["r4d8comp", "o", { title: "R4D8 Modbus Relay Module Settings" }]
+  - ["r4d8comp.address", "i", 0, { title: "Output Pin" }]
   #===================================================================================================
-  - ["r4d8out", "o", {title: "R4D8 Modbus Relay Output Settings", abstract: true}]
-  - ["r4d8out.name", "s", "", {title: "Output Name"}]
-  - ["r4d8out.port", "i", 0, {title: "Output port"}]
-  - ["r4d8out.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
+  - [
+      "r4d8out",
+      "o",
+      { title: "R4D8 Modbus Relay Output Settings", abstract: true },
+    ]
+  - ["r4d8out.name", "s", "", { title: "Output Name" }]
+  - ["r4d8out.port", "i", 0, { title: "Output port" }]
+  - [
+      "r4d8out.inverted",
+      "b",
+      false,
+      { title: "Invert output, set to true for normally open output" },
+    ]
   #=================================================================================================
-  - ["intout", "o", {title: "Internal Output Settings", abstract: true}]
-  - ["intout.name", "s", "", {title: "Output Name"}]
-  - ["intout.pin", "i", 0, {title: "Output Pin"}]
-  - ["intout.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
+  - ["intout", "o", { title: "Internal Output Settings", abstract: true }]
+  - ["intout.name", "s", "", { title: "Output Name" }]
+  - ["intout.pin", "i", 0, { title: "Output Pin" }]
+  - [
+      "intout.inverted",
+      "b",
+      false,
+      { title: "Invert output, set to true for normally open output" },
+    ]
   #=================================================================================================
-  - ["pcfout", "o", {title: "PCF857x Output Settings", abstract: true}]
-  - ["pcfout.prnt", "s", "", {title: "Parent PCF857x Expander Name"}]
-  - ["pcfout.name", "s", "", {title: "Output Name"}]
-  - ["pcfout.pin", "i", 0, {title: "Output Pin"}]
-  - ["pcfout.inverted", "b", false, {title: "Invert output, set to true for normally open output"}]
+  - ["pcfout", "o", { title: "PCF857x Output Settings", abstract: true }]
+  - ["pcfout.prnt", "s", "", { title: "Parent PCF857x Expander Name" }]
+  - ["pcfout.name", "s", "", { title: "Output Name" }]
+  - ["pcfout.pin", "i", 0, { title: "Output Pin" }]
+  - [
+      "pcfout.inverted",
+      "b",
+      false,
+      { title: "Invert output, set to true for normally open output" },
+    ]
   #=================================================================================================
-  - ["pcfin", "o", {title: "PCF857x Input Settings", abstract: true}]
-  - ["pcfin.prnt", "s", "", {title: "Parent PCF857x Expander Name"}]
-  - ["pcfin.name", "s", "", {title: "Input Name"}]
-  - ["pcfin.pin", "i", 0, {title: "Input Pin"}]
-  - ["pcfin.inverted", "b", false, {title: "Invert input"}]
+  - ["pcfin", "o", { title: "PCF857x Input Settings", abstract: true }]
+  - ["pcfin.prnt", "s", "", { title: "Parent PCF857x Expander Name" }]
+  - ["pcfin.name", "s", "", { title: "Input Name" }]
+  - ["pcfin.pin", "i", 0, { title: "Input Pin" }]
+  - ["pcfin.inverted", "b", false, { title: "Invert input" }]
   #==================================================================================================
-  - ["reg", "o", {title: "Regulator Settings", abstract: true}]
-  - ["reg.name", "s", "", {title: "Output Name"}]
-  - ["reg.type","i",0,{title: "Regulator Dest Up-0,Down-1"}] #Heater - Up ,Cooler -Down
-  - ["reg.enable", "b", false, {title: "Enable Regulator"}]
-  - ["reg.input", "s", "", {title: "Input Object Name"}]
-  - ["reg.output", "s", "", {title: "Output Object Name"}]
-  - ["reg.setpoint", "f", 0.0, {title: "Setpoint"}]
-  - ["reg.hist", "f", 0.0, {title: "Histeresis"}]  
-  - ["reg.inter","i",0,{title: "Update interval"}]
-#====================================================================================================
-  - ["irr", "o", {title: "Irrigation Scheduler Settings", abstract: true}]
-  - ["irr.name", "s", "", {title: "Daily Scheduler Name"}]
-  - ["irr.enable", "b", false, {title: "Enable Scheduler"}]
-  - ["irr.mode", "i", 0, {title: "Device Operation Mode(0-Manual OFF,1-Manual ON,2-AUTO)"}]
-  - ["irr.output", "s", "", {title: "Output Object Name"}]
-  - ["irr.start", "i", 0, {title: "Sunrise(minutes after midnight)"}]
-  - ["irr.stop", "i", 0, {title: "Sunset(minutes after midnight)"}]
-  - ["irr.num", "i", 0, {title: "Number if irrigations"}]
-  - ["irr.win", "i", 0, {title: "Irrigation window in seconds"}]
+  - ["reg", "o", { title: "Regulator Settings", abstract: true }]
+  - ["reg.name", "s", "", { title: "Output Name" }]
+  - ["reg.type", "i", 0, { title: "Regulator Dest Up-0,Down-1" }] #Heater - Up ,Cooler -Down
+  - ["reg.enable", "b", false, { title: "Enable Regulator" }]
+  - ["reg.input", "s", "", { title: "Input Object Name" }]
+  - ["reg.output", "s", "", { title: "Output Object Name" }]
+  - ["reg.setpoint", "f", 0.0, { title: "Setpoint" }]
+  - ["reg.hist", "f", 0.0, { title: "Histeresis" }]
+  - ["reg.inter", "i", 0, { title: "Update interval" }]
+  #====================================================================================================
+  - ["pump_output", "s", "", { title: "Global pump output for all irrigators" }]
+  - ["reverse_output", "s", "", { title: "Reverse output for all irrigators" }]
+  #====================================================================================================
+  - ["irr", "o", { title: "Irrigation Scheduler Settings", abstract: true }]
+  - ["irr.name", "s", "", { title: "Daily Scheduler Name" }]
+  - ["irr.enable", "b", false, { title: "Enable Scheduler" }]
+  - [
+      "irr.mode",
+      "i",
+      0,
+      { title: "Device Operation Mode(0-Manual OFF,1-Manual ON,2-AUTO,3-MAP)" },
+    ]
+  - ["irr.output", "s", "", { title: "Output Object Name" }]
+  - ["irr.start", "i", 0, { title: "Sunrise(minutes after midnight)" }]
+  - ["irr.stop", "i", 0, { title: "Sunset(minutes after midnight)" }]
+  - ["irr.num", "i", 0, { title: "Number if irrigations" }]
+  - ["irr.win", "i", 0, { title: "Irrigation window in seconds" }]
 
-#====================================================================================================
-  - ["light", "o", {title: "Light Timer Settings", abstract: true}]
-  - ["light.name", "s", "", {title: "Daily Scheduler Name"}]
-  - ["light.enable", "b", false, {title: "Enable Scheduler"}]
-  - ["light.mode", "i", 0, {title: "Device Operation Mode(0-Manual OFF,1-Manual ON,2-AUTO)"}]
-  - ["light.start", "i", 0, {title: "Sunrise (minutes of Day"}]
-  - ["light.stop", "i", 0, {title: "Sunset(minutes of Day)"}]
-  - ["light.output", "s", "", {title: "Output Object Name"}]
-#====================================================================================================
-#====================================================================================================
-  - ["pcfcomp1", "pcfcomp", {title: "PCFOut Component Settings"}]
-  - ["pcfcomp1.name","PCFOut"]
-  - ["pcfcomp1.address",0x24]
+  #====================================================================================================
+  - ["light", "o", { title: "Light Timer Settings", abstract: true }]
+  - ["light.name", "s", "", { title: "Daily Scheduler Name" }]
+  - ["light.enable", "b", false, { title: "Enable Scheduler" }]
+  - [
+      "light.mode",
+      "i",
+      0,
+      { title: "Device Operation Mode(0-Manual OFF,1-Manual ON,2-AUTO)" },
+    ]
+  - ["light.start", "i", 0, { title: "Sunrise (minutes of Day" }]
+  - ["light.stop", "i", 0, { title: "Sunset(minutes of Day)" }]
+  - ["light.output", "s", "", { title: "Output Object Name" }]
+  #====================================================================================================
+  #====================================================================================================
+  - ["pcfcomp1", "pcfcomp", { title: "PCFOut Component Settings" }]
+  - ["pcfcomp1.name", "PCFOut"]
+  - ["pcfcomp1.address", 0x24]
   - ["pcfcomp1.type", 0]
-#====================================================================================================
-  - ["irr1", "irr", {title: "Irrigation Scheduler Settings"}]
+  #====================================================================================================
+  - ["irr1", "irr", { title: "Irrigation Scheduler Settings" }]
   - ["irr1.name", "Irrigator1"]
-  - ["irr1.enable",true]
-  - ["irr1.mode", 1]
-  - ["irr1.output", "Pump1"]
-  - ["irr1.start",28800]
+  - ["irr1.enable", true]
+  - ["irr1.mode", 0]
+  - ["irr1.output", "Valve1"]
+  - ["irr1.start", 28800]
   - ["irr1.stop", 72000]
   - ["irr1.num", 24]
   - ["irr1.win", 150]
-#====================================================================================================
-  - ["irr2", "irr", {title: "Irrigation Scheduler Settings"}]
+  #====================================================================================================
+  - ["irr2", "irr", { title: "Irrigation Scheduler Settings" }]
   - ["irr2.name", "Irrigator2"]
-  - ["irr2.enable",true]
-  - ["irr2.mode", 1]
-  - ["irr2.output", "Pump7"]
-  - ["irr2.start",21600]
+  - ["irr2.enable", true]
+  - ["irr2.mode", 0]
+  - ["irr2.output", "Valve2"]
+  - ["irr2.start", 21600]
   - ["irr2.stop", 84599]
   - ["irr2.num", 5]
   - ["irr2.win", 180]
-#====================================================================================================
-  - ["irr3", "irr", {title: "Irrigation Scheduler Settings"}]
+  #====================================================================================================
+  - ["irr3", "irr", { title: "Irrigation Scheduler Settings" }]
   - ["irr3.name", "Irrigator3"]
-  - ["irr3.enable",true]
+  - ["irr3.enable", true]
   - ["irr3.mode", 0]
-  - ["irr3.output", "Pump3"]
-  - ["irr3.start",72000]
+  - ["irr3.output", "Valve3"]
+  - ["irr3.start", 72000]
   - ["irr3.stop", 28800]
   - ["irr3.num", 6]
   - ["irr3.win", 360]
-#====================================================================================================
-  - ["irr4", "irr", {title: "Irrigation Scheduler Settings"}]
+  #====================================================================================================
+  - ["irr4", "irr", { title: "Irrigation Scheduler Settings" }]
   - ["irr4.name", "Irrigator4"]
-  - ["irr4.enable",true]
+  - ["irr4.enable", true]
   - ["irr4.mode", 0]
-  - ["irr4.output", "Pump4"]
-  - ["irr4.start",72000]
+  - ["irr4.output", "Valve4"]
+  - ["irr4.start", 72000]
   - ["irr4.stop", 28800]
   - ["irr4.num", 8]
   - ["irr4.win", 240]
-#====================================================================================================
-  - ["irr5", "irr", {title: "Irrigation Scheduler Settings"}]
+  #====================================================================================================
+  - ["irr5", "irr", { title: "Irrigation Scheduler Settings" }]
   - ["irr5.name", "Irrigator5"]
-  - ["irr5.enable",true]
-  - ["irr5.mode", 1]
-  - ["irr5.output", "Pump5"]
-  - ["irr5.start",72000]
+  - ["irr5.enable", true]
+  - ["irr5.mode", 0]
+  - ["irr5.output", "Valve5"]
+  - ["irr5.start", 72000]
   - ["irr5.stop", 28800]
   - ["irr5.num", 24]
   - ["irr5.win", 240]
-#====================================================================================================
-  - ["irr6", "irr", {title: "Irrigation Scheduler Settings"}]
-  - ["irr6.name", "Irrigator6"]
-  - ["irr6.enable",true]
-  - ["irr6.mode", 1]
-  - ["irr6.output", "Pump6"]
-  - ["irr6.start",72000]
-  - ["irr6.stop", 28800]
-  - ["irr6.num", 8]
-  - ["irr6.win", 240]
-#====================================================================================================
-  - ["irr7", "irr", {title: "Irrigation Scheduler Settings"}]
-  - ["irr7.name", "Irrigator7"]
-  - ["irr7.enable",true]
-  - ["irr7.mode", 1]
-  - ["irr7.output", "Pump7"]
-  - ["irr7.start",72000]
-  - ["irr7.stop", 28800]
-  - ["irr7.num", 24]
-  - ["irr7.win", 240]
-#====================================================================================================
-  - ["light1", "light", {title: "Light Timer Settings"}]
+  #====================================================================================================
+  - ["light1", "light", { title: "Light Timer Settings" }]
   - ["light1.name", "LightTimer"]
-  - ["light1.enable",true ]
-  - ["light1.mode",2]
+  - ["light1.enable", true]
+  - ["light1.mode", 0]
   - ["light1.start", 28800]
   - ["light1.stop", 72000]
   - ["light1.output", "Light"]
 
-#====================================================================================================
-  - ["pcfout1", "pcfout", {title: "PCFOutput Settings"}]
+  #====================================================================================================
+  - ["pcfout1", "pcfout", { title: "PCFOutput Settings" }]
   - ["pcfout1.prnt", "PCFOut"]
   - ["pcfout1.name", "Light"]
-  - ["pcfout1.pin",0]
-  - ["pcfout1.inverted",true]
-#====================================================================================================
-  - ["pcfout2", "pcfout", {title: "PCFOutput Settings"}]
-  - ["pcfout2.prnt", "PCFOut"]
-  - ["pcfout2.name", "Pump1"]
-  - ["pcfout2.pin",1]
-  - ["pcfout2.inverted",true]
-#====================================================================================================
-  - ["pcfout3", "pcfout", {title: "PCFOutput Settings"}]
-  - ["pcfout3.prnt", "PCFOut"]
-  - ["pcfout3.name", "Pump2"]
-  - ["pcfout3.pin",2]
-  - ["pcfout3.inverted",true]
-#====================================================================================================
-  - ["pcfout4", "pcfout", {title: "PCFOutput Settings"}]
-  - ["pcfout4.prnt", "PCFOut"]
-  - ["pcfout4.name", "Pump3"]
-  - ["pcfout4.pin",3]
-  - ["pcfout4.inverted",true]
-#====================================================================================================
-  - ["pcfout5", "pcfout", {title: "PCFOutput Settings"}]
-  - ["pcfout5.prnt", "PCFOut"]
-  - ["pcfout5.name", "Pump4"]
-  - ["pcfout5.pin",4]
-  - ["pcfout5.inverted",true]
-#====================================================================================================
-  - ["pcfout6", "pcfout", {title: "PCFOutput Settings"}]
-  - ["pcfout6.prnt", "PCFOut"]
-  - ["pcfout6.name", "Pump5"]
-  - ["pcfout6.pin",5]
-  - ["pcfout6.inverted",true]
+  - ["pcfout1.pin", 0]
+  - ["pcfout1.inverted", true]
   #====================================================================================================
-  - ["pcfout7", "pcfout", {title: "PCFOutput Settings"}]
+  - ["pcfout2", "pcfout", { title: "PCFOutput Settings" }]
+  - ["pcfout2.prnt", "PCFOut"]
+  - ["pcfout2.name", "Valve1"]
+  - ["pcfout2.pin", 1]
+  - ["pcfout2.inverted", true]
+  #====================================================================================================
+  - ["pcfout3", "pcfout", { title: "PCFOutput Settings" }]
+  - ["pcfout3.prnt", "PCFOut"]
+  - ["pcfout3.name", "Valve2"]
+  - ["pcfout3.pin", 2]
+  - ["pcfout3.inverted", true]
+  #====================================================================================================
+  - ["pcfout4", "pcfout", { title: "PCFOutput Settings" }]
+  - ["pcfout4.prnt", "PCFOut"]
+  - ["pcfout4.name", "Valve3"]
+  - ["pcfout4.pin", 3]
+  - ["pcfout4.inverted", true]
+  #====================================================================================================
+  - ["pcfout5", "pcfout", { title: "PCFOutput Settings" }]
+  - ["pcfout5.prnt", "PCFOut"]
+  - ["pcfout5.name", "Valve4"]
+  - ["pcfout5.pin", 4]
+  - ["pcfout5.inverted", true]
+  #====================================================================================================
+  - ["pcfout6", "pcfout", { title: "PCFOutput Settings" }]
+  - ["pcfout6.prnt", "PCFOut"]
+  - ["pcfout6.name", "Valve5"]
+  - ["pcfout6.pin", 5]
+  - ["pcfout6.inverted", true]
+  #====================================================================================================
+  - ["pcfout7", "pcfout", { title: "PCFOutput Settings" }]
   - ["pcfout7.prnt", "PCFOut"]
-  - ["pcfout7.name", "Pump6"]
-  - ["pcfout7.pin",6]
-  - ["pcfout7.inverted",true]
+  - ["pcfout7.name", "Valve6"]
+  - ["pcfout7.pin", 6]
+  - ["pcfout7.inverted", true]
     #====================================================================================================
-  - ["pcfout8", "pcfout", {title: "PCFOutput Settings"}]
+  - ["pcfout8", "pcfout", { title: "PCFOutput Settings" }]
   - ["pcfout8.prnt", "PCFOut"]
-  - ["pcfout8.name", "Pump7"]
-  - ["pcfout8.pin",7]
-  - ["pcfout8.inverted",true]
-
-
-
+  - ["pcfout8.name", "Pump"]
+  - ["pcfout8.pin", 7]
+  - ["pcfout8.inverted", true]
+  #====================================================================================================
+  - ["pump_output", "Pump"]
+  - ["reverse_output", "Valve6"]
 
 libs:
-# - origin: https://github.com/mongoose-os-libs/dash
-#  - origin: https://github.com/mongoose-os-libs/ca-bundle
+  # - origin: https://github.com/mongoose-os-libs/dash
+  #  - origin: https://github.com/mongoose-os-libs/ca-bundle
   - origin: https://github.com/mongoose-os-libs/http-server
   - origin: https://github.com/mongoose-os-libs/mqtt
   - origin: https://github.com/mongoose-os-libs/rpc-ws
@@ -261,8 +277,8 @@ libs:
   - origin: https://github.com/mongoose-os-libs/rpc-service-fs
   - origin: https://github.com/mongoose-os-libs/rpc-service-i2c
   # - origin: https://github.com/IfNoise/dallas-rmt
-#  - origin: https://github.com/mongoose-os-libs/bme280
-#  - origin: https://github.com/mongoose-os-libs/wifi
+  #  - origin: https://github.com/mongoose-os-libs/bme280
+  - origin: https://github.com/mongoose-os-libs/wifi
   - origin: https://github.com/mongoose-os-libs/ethernet
   - origin: https://github.com/mongoose-os-libs/sntp
   - origin: https://github.com/mongoose-os-libs/pcf857x-i2c

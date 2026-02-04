@@ -134,8 +134,14 @@ config_schema:
   - ["irr.stop", "i", 0, { title: "Sunset(minutes after midnight)" }]
   - ["irr.num", "i", 0, { title: "Number if irrigations" }]
   - ["irr.win", "i", 0, { title: "Irrigation window in seconds" }]
+  - [
+      "irr.ctrl_input",
+      "s",
+      "",
+      { title: "Control input name (empty to disable)" },
+    ]
 
-  #====================================================================================================
+  #===================================================================================================="
   - ["light", "o", { title: "Light Timer Settings", abstract: true }]
   - ["light.name", "s", "", { title: "Daily Scheduler Name" }]
   - ["light.enable", "b", false, { title: "Enable Scheduler" }]
@@ -148,7 +154,13 @@ config_schema:
   - ["light.start", "i", 0, { title: "Sunrise (minutes of Day" }]
   - ["light.stop", "i", 0, { title: "Sunset(minutes of Day)" }]
   - ["light.output", "s", "", { title: "Output Object Name" }]
-  #====================================================================================================
+  - [
+      "light.ctrl_input",
+      "s",
+      "",
+      { title: "Control input name (empty to disable)" },
+    ]
+  #===================================================================================================="
   #====================================================================================================
   - ["pcfcomp1", "pcfcomp", { title: "PCFOut Component Settings" }]
   - ["pcfcomp1.name", "PCFOut"]

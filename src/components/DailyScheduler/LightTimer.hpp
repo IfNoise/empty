@@ -15,6 +15,10 @@ public:
 LightTimer::LightTimer(mgos_config_light *cfg) : Scheduler(cfg->name, cfg->output),
                                                  _cfg(cfg)
 {
+  // Инициализация имени управляющего входа и сохраненного режима
+  _controlInputName = cfg->ctrl_input ? std::string(cfg->ctrl_input) : "";
+  _savedMode = cfg->mode;
+  
   SchedulerItem item;
   item.start = _cfg->start;
   item.stop = _cfg->stop;
@@ -25,7 +29,21 @@ void LightTimer::Update()
 {
   if (_cfg->enable)
   {
-    uint32_t mode = _cfg->mode;
+    int mode = _cfg->mode;
+    
+    // Проверяем управляющий вход
+    if (checkControlInput(mode))
+    {
+      on();  // Принудительное включение
+      return;
+    }
+    
+    // Если вход был активен, а теперь нет - восстанавливаем режим
+    if (mode == MANUAL_ON && _savedMode != MANUAL_ON)
+    {
+      mode = _savedMode;
+    }
+    
     switch (mode)
     {
     case MANUAL_OFF:

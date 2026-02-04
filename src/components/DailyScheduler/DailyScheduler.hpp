@@ -2,6 +2,7 @@
 
 #include "core/Component.hpp"
 #include "core/Output.hpp"
+#include "core/Input.hpp"
 #include "core/Application.hpp"
 #include "mgos_config.h"
 #include "mgos_sys_config.h"
@@ -34,6 +35,7 @@ public:
 protected:
     Status saveItems();
     Status loadItems();
+    bool checkControlInput(int& current_mode);
     std::vector<SchedulerItem> _items{}; // Setpoints vector
     Callback _onCallback{nullptr};
     Callback _offCallback = {nullptr};
@@ -42,6 +44,9 @@ protected:
     bool map_is_loaded{false};
     std::string _output;
     BinaryOutput *_out{nullptr};
+    std::string _controlInputName;
+    BinaryInput* _controlInput{nullptr};
+    int _savedMode{AUTO};
 };
 
 Scheduler::Scheduler(std::string name, std::string output) : PollingComponent(name, 10000), _output(output)
@@ -51,6 +56,21 @@ Scheduler::Scheduler(std::string name, std::string output) : PollingComponent(na
 Status Scheduler::Init()
 {
     _out = App.getBinOutputByName(_output);
+    
+    // Инициализация управляющего входа (если задан)
+    if (!_controlInputName.empty())
+    {
+        _controlInput = App.getBinInputByName(_controlInputName);
+        if (_controlInput != nullptr)
+        {
+            LOG(LL_INFO, ("%s: control input '%s' initialized", _name.c_str(), _controlInputName.c_str()));
+        }
+        else
+        {
+            LOG(LL_WARN, ("%s: control input '%s' not found", _name.c_str(), _controlInputName.c_str()));
+        }
+    }
+    
     _timer = new Timer(_interval, MGOS_TIMER_REPEAT, std::bind(&PollingComponent::callback, this));
     _timer->Reset(_interval, MGOS_TIMER_REPEAT);
     if (_timer->IsValid())
@@ -248,4 +268,38 @@ Status Scheduler::saveItems()
         LOG(LL_ERROR, ("Something went wrong,Items not saved "));
         return Status(STATUS_DATA_LOSS, "Items not saved");
     }
+}
+
+bool Scheduler::checkControlInput(int& current_mode)
+{
+    if (_controlInput == nullptr)
+    {
+        return false;  // Нет управляющего входа
+    }
+    
+    bool inputState = _controlInput->getState();
+    
+    if (inputState)
+    {
+        // Вход активен - переключаемся в MANUAL_ON
+        if (current_mode != MANUAL_ON)
+        {
+            _savedMode = current_mode;  // Сохраняем текущий режим
+            LOG(LL_INFO, ("%s: Control input HIGH, forcing MANUAL_ON (saved mode: %d)", 
+                          _name.c_str(), _savedMode));
+            return true;  // Указываем, что нужно включить выход
+        }
+    }
+    else
+    {
+        // Вход неактивен - проверяем, не были ли мы в принудительном режиме
+        if (current_mode == MANUAL_ON && _savedMode != MANUAL_ON)
+        {
+            LOG(LL_INFO, ("%s: Control input LOW, restoring mode %d", 
+                          _name.c_str(), _savedMode));
+            // Не меняем current_mode здесь, это сделает Update()
+        }
+    }
+    
+    return false;
 }

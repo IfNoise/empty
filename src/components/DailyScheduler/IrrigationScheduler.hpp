@@ -61,6 +61,10 @@ public:
 IrrigationScheduler::IrrigationScheduler(mgos_config_irr *cfg) : Scheduler(cfg->name, cfg->output),
                                                                  _cfg(cfg)
 {
+  // Инициализация имени управляющего входа и сохраненного режима
+  _controlInputName = cfg->ctrl_input ? std::string(cfg->ctrl_input) : "";
+  _savedMode = cfg->mode;
+  
   // Инициализация общего насоса (выполняется один раз для первого экземпляра)
   initSharedPump();
   
@@ -150,7 +154,7 @@ Status IrrigationScheduler::Init()
     }
     else
     {
-      LOG(LL_WARN, ("IrrigationScheduler %s: failed to load map items from file: %s", _name.c_str(), s.error_message()));
+      LOG(LL_WARN, ("IrrigationScheduler %s: failed to load map items from file: %s", _name.c_str(), s.error_message().c_str()));
       LOG(LL_WARN, ("IrrigationScheduler %s: will try to load in Update() or use manual mode", _name.c_str()));
       map_is_loaded = false;
     }
@@ -168,7 +172,21 @@ void IrrigationScheduler::Update()
 {
   if (_cfg->enable)
   {
-    uint32_t mode = _cfg->mode;
+    int mode = _cfg->mode;
+    
+    // Проверяем управляющий вход
+    if (checkControlInput(mode))
+    {
+      on();  // Принудительное включение
+      return;
+    }
+    
+    // Если вход был активен, а теперь нет - восстанавливаем режим
+    if (mode == MANUAL_ON && _savedMode != MANUAL_ON)
+    {
+      mode = _savedMode;
+    }
+    
     switch (mode)
     {
     case MANUAL_OFF:
